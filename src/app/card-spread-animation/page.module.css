@@ -1,0 +1,42 @@
+.container {
+  position: relative;
+}
+
+.list {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  position: relative;
+  z-index: 2;
+}
+
+.listItem {
+  height: 200px;
+  width: 300px;
+  border: 1px solid #000;
+  border-radius: 4px;
+  position: relative;
+  left: 0;
+  top: 0;
+  transition: 0.3s;
+  overflow: hidden;
+}
+
+.listItem.active {
+  transition: transform 0.3s;
+  z-index: 1;
+}
+
+.listItem.inactive {
+  transition: opacity 0.3s, transform 0.3s 0.3s;
+  opacity: 0;
+}
+
+.listItemInner {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100%;
+  width: 100%;
+  border: 0;
+}

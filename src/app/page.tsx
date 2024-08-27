@@ -7,6 +7,9 @@ export default function Home() {
   return (
     <ul>
       <li>
+        <Link href="/card-spread-animation">card-spread-animation</Link>
+      </li>
+      <li>
         <Link href="/walkthrough">walkthrough</Link>
       </li>
     </ul>
