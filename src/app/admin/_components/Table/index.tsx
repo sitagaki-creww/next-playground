@@ -1,11 +1,8 @@
 "use client";
-import DeleteIcon from "@mui/icons-material/Delete";
-import FilterListIcon from "@mui/icons-material/FilterList";
-import Box from "@mui/material/Box";
-import Checkbox from "@mui/material/Checkbox";
-import IconButton from "@mui/material/IconButton";
-import Paper from "@mui/material/Paper";
+
+import * as React from "react";
 import { alpha } from "@mui/material/styles";
+import Box from "@mui/material/Box";
 import Table from "@mui/material/Table";
 import TableBody from "@mui/material/TableBody";
 import TableCell from "@mui/material/TableCell";
@@ -15,33 +12,41 @@ import TablePagination from "@mui/material/TablePagination";
 import TableRow from "@mui/material/TableRow";
 import TableSortLabel from "@mui/material/TableSortLabel";
 import Toolbar from "@mui/material/Toolbar";
-import Tooltip from "@mui/material/Tooltip";
 import Typography from "@mui/material/Typography";
+import Paper from "@mui/material/Paper";
+import Checkbox from "@mui/material/Checkbox";
+import IconButton from "@mui/material/IconButton";
+import Tooltip from "@mui/material/Tooltip";
+import FormControlLabel from "@mui/material/FormControlLabel";
+import Switch from "@mui/material/Switch";
+import DeleteIcon from "@mui/icons-material/Delete";
+import FilterListIcon from "@mui/icons-material/FilterList";
 import { visuallyHidden } from "@mui/utils";
-import * as React from "react";
+import { Link } from "@mui/material";
+import AttachFileIcon from "@mui/icons-material/AttachFile";
 
 interface Data {
   id: number;
-  name: string;
-  email: string;
-  permissions: string;
+  country: string;
   createdAt: string;
+  attachedFileURL: string;
+  email: string;
   updatedAt: string;
 }
 
 function createData(
   id: number,
-  name: string,
   email: string,
-  permissions: string,
+  country: string,
+  attachedFileURL: string,
   createdAt: string,
   updatedAt: string
 ): Data {
   return {
     id,
-    name,
     email,
-    permissions,
+    country,
+    attachedFileURL,
     createdAt,
     updatedAt,
   };
@@ -50,107 +55,107 @@ function createData(
 const rows = [
   createData(
     1,
-    "tanaka",
-    "tanaka@example.com",
-    "super admin",
-    "2024-01-01",
-    "2024-01-01"
+    "example+1@example.com",
+    "Japan",
+    "https://example.com",
+    "2024-01-01T00:00:01",
+    "2024-01-01T00:00:01"
   ),
   createData(
     2,
-    "hayashi",
-    "hayashi@example.com",
-    "super admin",
-    "2024-01-01",
-    "2024-01-01"
+    "example+2@example.com",
+    "Japan",
+    "https://example.com",
+    "2024-01-01T00:00:02",
+    "2024-01-01T00:00:02"
   ),
   createData(
     3,
-    "sato",
-    "sato@example.com",
-    "super admin",
-    "2024-01-01",
-    "2024-01-01"
+    "example+3@example.com",
+    "Japan",
+    "https://example.com",
+    "2024-01-01T00:00:03",
+    "2024-01-01T00:00:03"
   ),
   createData(
     4,
-    "kiki",
-    "kiki@example.com",
-    "super admin",
-    "2024-01-01",
-    "2024-01-01"
+    "example+4@example.com",
+    "Japan",
+    "https://example.com",
+    "2024-01-01T00:00:04",
+    "2024-01-01T00:00:04"
   ),
   createData(
     5,
-    "norman",
-    "norman@example.com",
-    "super admin",
-    "2024-01-01",
-    "2024-01-01"
+    "example+5@example.com",
+    "Japan",
+    "https://example.com",
+    "2024-01-01T00:00:05",
+    "2024-01-01T00:00:05"
   ),
   createData(
     6,
-    "yamada",
-    "yamada@example.com",
-    "super admin",
-    "2024-01-01",
-    "2024-01-01"
+    "example+6@example.com",
+    "Japan",
+    "https://example.com",
+    "2024-01-01T00:00:06",
+    "2024-01-01T00:00:06"
   ),
   createData(
     7,
-    "masuda",
-    "masuda@example.com",
-    "super admin",
-    "2024-01-01",
-    "2024-01-01"
+    "example+7@example.com",
+    "Japan",
+    "https://example.com",
+    "2024-01-01T00:00:07",
+    "2024-01-01T00:00:07"
   ),
   createData(
     8,
-    "uchiyama",
-    "uchiyama@example.com",
-    "super admin",
-    "2024-01-01",
-    "2024-01-01"
+    "example+8@example.com",
+    "Japan",
+    "https://example.com",
+    "2024-01-01T00:00:08",
+    "2024-01-01T00:00:08"
   ),
   createData(
     9,
-    "todoroki",
-    "todoroki@example.com",
-    "super admin",
-    "2024-01-01",
-    "2024-01-01"
+    "example+9@example.com",
+    "Japan",
+    "https://example.com",
+    "2024-01-01T00:00:09",
+    "2024-01-01T00:00:09"
   ),
   createData(
     10,
-    "machida",
-    "machida@example.com",
-    "super admin",
-    "2024-01-01",
-    "2024-01-01"
+    "example+10@example.com",
+    "Taiwan",
+    "https://example.com",
+    "2024-01-01T00:00:10",
+    "2024-01-01T00:00:10"
   ),
   createData(
     11,
-    "koyama",
-    "koyama@example.com",
-    "super admin",
-    "2024-01-01",
-    "2024-01-01"
+    "example+11@example.com",
+    "South Korea",
+    "https://example.com",
+    "2024-01-01T00:00:11",
+    "2024-01-01T00:00:11"
   ),
   createData(
     12,
-    "oyama",
-    "oyama@example.com",
-    "super admin",
-    "2024-01-01",
-    "2024-01-01"
+    "example+12@example.com",
+    "USA",
+    "https://example.com",
+    "2024-01-01T00:00:12",
+    "2024-01-01T00:00:12"
   ),
   createData(
     13,
-    "chuyama",
-    "chuyama@example.com",
-    "super admin",
-    "2024-01-01",
-    "2024-01-01"
+    "example+13@example.com",
+    "Japan",
+    "https://example.com",
+    "2024-01-01T00:00:13",
+    "2024-01-01T00:00:13"
   ),
 ];
 
@@ -179,7 +184,6 @@ function getComparator<Key extends keyof any>(
 }
 
 interface HeadCell {
-  disablePadding: boolean;
   id: keyof Data;
   label: string;
   numeric: boolean;
@@ -187,34 +191,29 @@ interface HeadCell {
 
 const headCells: readonly HeadCell[] = [
   {
-    id: "name",
-    numeric: false,
-    disablePadding: true,
-    label: "name",
-  },
-  {
     id: "email",
     numeric: false,
-    disablePadding: false,
-    label: "email",
+    label: "Email",
   },
   {
-    id: "permissions",
+    id: "country",
     numeric: false,
-    disablePadding: false,
-    label: "permissions",
+    label: "国",
+  },
+  {
+    id: "attachedFileURL",
+    numeric: false,
+    label: "添付ファイル",
   },
   {
     id: "createdAt",
     numeric: false,
-    disablePadding: false,
-    label: "created at",
+    label: "提出日時",
   },
   {
     id: "updatedAt",
     numeric: false,
-    disablePadding: false,
-    label: "updated at",
+    label: "更新日時",
   },
 ];
 
@@ -247,22 +246,10 @@ function EnhancedTableHead(props: EnhancedTableProps) {
   return (
     <TableHead>
       <TableRow>
-        <TableCell padding="checkbox">
-          <Checkbox
-            color="primary"
-            indeterminate={numSelected > 0 && numSelected < rowCount}
-            checked={rowCount > 0 && numSelected === rowCount}
-            onChange={onSelectAllClick}
-            inputProps={{
-              "aria-label": "select all desserts",
-            }}
-          />
-        </TableCell>
         {headCells.map((headCell) => (
           <TableCell
             key={headCell.id}
             align={headCell.numeric ? "right" : "left"}
-            padding={headCell.disablePadding ? "none" : "normal"}
             sortDirection={orderBy === headCell.id ? order : false}
           >
             <TableSortLabel
@@ -320,13 +307,19 @@ function EnhancedTableToolbar(props: EnhancedTableToolbarProps) {
           id="tableTitle"
           component="div"
         >
-          Admins
+          応募一覧
         </Typography>
       )}
-      {numSelected > 0 && (
+      {numSelected > 0 ? (
         <Tooltip title="Delete">
           <IconButton>
             <DeleteIcon />
+          </IconButton>
+        </Tooltip>
+      ) : (
+        <Tooltip title="Filter list">
+          <IconButton>
+            <FilterListIcon />
           </IconButton>
         </Tooltip>
       )}
@@ -335,7 +328,7 @@ function EnhancedTableToolbar(props: EnhancedTableToolbarProps) {
 }
 export default function EnhancedTable() {
   const [order, setOrder] = React.useState<Order>("asc");
-  const [orderBy, setOrderBy] = React.useState<keyof Data>("name");
+  const [orderBy, setOrderBy] = React.useState<keyof Data>("updatedAt");
   const [selected, setSelected] = React.useState<readonly number[]>([]);
   const [page, setPage] = React.useState(0);
   const [dense, setDense] = React.useState(false);
@@ -359,25 +352,6 @@ export default function EnhancedTable() {
     setSelected([]);
   };
 
-  const handleClick = (event: React.MouseEvent<unknown>, id: number) => {
-    const selectedIndex = selected.indexOf(id);
-    let newSelected: readonly number[] = [];
-
-    if (selectedIndex === -1) {
-      newSelected = newSelected.concat(selected, id);
-    } else if (selectedIndex === 0) {
-      newSelected = newSelected.concat(selected.slice(1));
-    } else if (selectedIndex === selected.length - 1) {
-      newSelected = newSelected.concat(selected.slice(0, -1));
-    } else if (selectedIndex > 0) {
-      newSelected = newSelected.concat(
-        selected.slice(0, selectedIndex),
-        selected.slice(selectedIndex + 1)
-      );
-    }
-    setSelected(newSelected);
-  };
-
   const handleChangePage = (event: unknown, newPage: number) => {
     setPage(newPage);
   };
@@ -387,10 +361,6 @@ export default function EnhancedTable() {
   ) => {
     setRowsPerPage(parseInt(event.target.value, 10));
     setPage(0);
-  };
-
-  const handleChangeDense = (event: React.ChangeEvent<HTMLInputElement>) => {
-    setDense(event.target.checked);
   };
 
   // Avoid a layout jump when reaching the last page with empty rows.
@@ -431,7 +401,6 @@ export default function EnhancedTable() {
                 return (
                   <TableRow
                     hover
-                    onClick={(event) => handleClick(event, row.id)}
                     role="checkbox"
                     aria-checked={isItemSelected}
                     tabIndex={-1}
@@ -439,27 +408,32 @@ export default function EnhancedTable() {
                     selected={isItemSelected}
                     sx={{ cursor: "pointer" }}
                   >
-                    <TableCell padding="checkbox">
-                      <Checkbox
-                        color="primary"
-                        checked={isItemSelected}
-                        inputProps={{
-                          "aria-labelledby": labelId,
+                    <TableCell component="th" id={labelId} scope="row">
+                      {row.email}
+                    </TableCell>
+                    <TableCell>{row.country}</TableCell>
+                    <TableCell>
+                      <Link
+                        href={row.attachedFileURL}
+                        sx={{
+                          display: "flex",
+                          alignItems: "center",
+                          fontSize: 14,
                         }}
-                      />
+                        target="_blank"
+                        rel="noopener noreferrer"
+                      >
+                        <AttachFileIcon sx={{ fontSize: "inherit" }} />
+                        <Typography
+                          sx={{ fontSize: "inherit" }}
+                          component="span"
+                        >
+                          添付ファイル
+                        </Typography>
+                      </Link>
                     </TableCell>
-                    <TableCell
-                      component="th"
-                      id={labelId}
-                      scope="row"
-                      padding="none"
-                    >
-                      {row.name}
-                    </TableCell>
-                    <TableCell align="right">{row.email}</TableCell>
-                    <TableCell align="right">{row.permissions}</TableCell>
-                    <TableCell align="right">{row.createdAt}</TableCell>
-                    <TableCell align="right">{row.updatedAt}</TableCell>
+                    <TableCell>{row.createdAt}</TableCell>
+                    <TableCell>{row.updatedAt}</TableCell>
                   </TableRow>
                 );
               })}

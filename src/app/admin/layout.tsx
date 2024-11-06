@@ -14,8 +14,7 @@ import ListItem from "@mui/material/ListItem";
 import ListItemButton from "@mui/material/ListItemButton";
 import ListItemIcon from "@mui/material/ListItemIcon";
 import ListItemText from "@mui/material/ListItemText";
-import PersonIcon from "@mui/icons-material/Person";
-import SearchIcon from "@mui/icons-material/Search";
+import EmailIcon from "@mui/icons-material/Email";
 import { Avatar, IconButton, Menu, MenuItem, Tooltip } from "@mui/material";
 
 const drawerWidth = 240;
@@ -109,18 +108,9 @@ export default function RootLayout({
               <ListItem disablePadding>
                 <ListItemButton selected>
                   <ListItemIcon>
-                    <PersonIcon />
+                    <EmailIcon />
                   </ListItemIcon>
-                  <ListItemText primary="Admins" />
-                </ListItemButton>
-              </ListItem>
-
-              <ListItem disablePadding>
-                <ListItemButton>
-                  <ListItemIcon>
-                    <SearchIcon />
-                  </ListItemIcon>
-                  <ListItemText primary="Users" />
+                  <ListItemText primary="Pre-application" />
                 </ListItemButton>
               </ListItem>
             </List>
