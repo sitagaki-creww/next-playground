@@ -14,8 +14,10 @@ import ListItem from "@mui/material/ListItem";
 import ListItemButton from "@mui/material/ListItemButton";
 import ListItemIcon from "@mui/material/ListItemIcon";
 import ListItemText from "@mui/material/ListItemText";
-import EmailIcon from "@mui/icons-material/Email";
+import BarChartIcon from "@mui/icons-material/BarChart";
+import TableChartIcon from "@mui/icons-material/TableChart";
 import { Avatar, IconButton, Menu, MenuItem, Tooltip } from "@mui/material";
+import { usePathname, useRouter } from "next/navigation";
 
 const drawerWidth = 240;
 
@@ -24,6 +26,9 @@ export default function RootLayout({
 }: Readonly<{
   children: React.ReactNode;
 }>) {
+  const router = useRouter();
+  const pathname = usePathname();
+
   const [anchorElNav, setAnchorElNav] = React.useState<null | HTMLElement>(
     null
   );
@@ -106,11 +111,25 @@ export default function RootLayout({
           <Box sx={{ overflow: "auto" }}>
             <List>
               <ListItem disablePadding>
-                <ListItemButton selected>
+                <ListItemButton
+                  selected={pathname === "/overview"}
+                  onClick={() => router.push("/overview")}
+                >
                   <ListItemIcon>
-                    <EmailIcon />
+                    <BarChartIcon />
                   </ListItemIcon>
-                  <ListItemText primary="Pre-application" />
+                  <ListItemText primary="Overview" />
+                </ListItemButton>
+              </ListItem>
+              <ListItem disablePadding>
+                <ListItemButton
+                  selected={pathname === "/detail"}
+                  onClick={() => router.push("/detail")}
+                >
+                  <ListItemIcon>
+                    <TableChartIcon />
+                  </ListItemIcon>
+                  <ListItemText primary="Detail" />
                 </ListItemButton>
               </ListItem>
             </List>

@@ -4,11 +4,6 @@ import * as React from "react";
 import { BarChart } from "@mui/x-charts/BarChart";
 
 const chartSetting = {
-  xAxis: [
-    {
-      label: "応募数",
-    },
-  ],
   height: 200,
 };
 
@@ -27,7 +22,7 @@ export default function HorizontalBars() {
           },
         },
       ]}
-      series={[{ dataKey: "total", label: "総数" }]}
+      series={[{ dataKey: "total" }]}
       layout="horizontal"
       {...chartSetting}
     />
@@ -37,7 +32,7 @@ export default function HorizontalBars() {
 export const dataset = [
   {
     country: "Japan",
-    total: 4,
+    total: 5,
   },
   {
     country: "South Korea",
