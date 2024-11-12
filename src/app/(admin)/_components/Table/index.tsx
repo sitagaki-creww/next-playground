@@ -32,6 +32,7 @@ import { visuallyHidden } from "@mui/utils";
 import * as React from "react";
 import RowDivider from "../RowDivider";
 import ColumnDivider from "../ColumnDivider";
+import { useModel } from "./model";
 
 interface Data {
   id: number;
@@ -42,146 +43,6 @@ interface Data {
   createdAt: string;
   updatedAt: string;
 }
-
-function createData(
-  id: number,
-  name: string,
-  email: string,
-  country: string,
-  submittedAt: string,
-  createdAt: string,
-  updatedAt: string
-): Data {
-  return {
-    id,
-    name,
-    email,
-    country,
-    submittedAt,
-    createdAt,
-    updatedAt,
-  };
-}
-
-const rows = [
-  createData(
-    1,
-    "John",
-    "example+1@example.com",
-    "Japan",
-    "2024-01-01T00:00:01",
-    "2024-01-01T00:00:01",
-    "2024-01-01T00:00:01"
-  ),
-  createData(
-    2,
-    "John",
-    "example+2@example.com",
-    "Japan",
-    "2024-01-01T00:00:02",
-    "2024-01-01T00:00:02",
-    "2024-01-01T00:00:02"
-  ),
-  createData(
-    3,
-    "John",
-    "example+3@example.com",
-    "Japan",
-    "2024-01-01T00:00:03",
-    "2024-01-01T00:00:03",
-    "2024-01-01T00:00:03"
-  ),
-  createData(
-    4,
-    "John",
-    "example+4@example.com",
-    "Japan",
-    "2024-01-01T00:00:04",
-    "2024-01-01T00:00:04",
-    "2024-01-01T00:00:04"
-  ),
-  createData(
-    5,
-    "John",
-    "example+5@example.com",
-    "Japan",
-    "2024-01-01T00:00:05",
-    "2024-01-01T00:00:05",
-    "2024-01-01T00:00:05"
-  ),
-  createData(
-    6,
-    "John",
-    "example+6@example.com",
-    "Japan",
-    "2024-01-01T00:00:06",
-    "2024-01-01T00:00:06",
-    "2024-01-01T00:00:06"
-  ),
-  createData(
-    7,
-    "John",
-    "example+7@example.com",
-    "Japan",
-    "2024-01-01T00:00:07",
-    "2024-01-01T00:00:07",
-    "2024-01-01T00:00:07"
-  ),
-  createData(
-    8,
-    "John",
-    "example+8@example.com",
-    "Japan",
-    "2024-01-01T00:00:08",
-    "2024-01-01T00:00:08",
-    "2024-01-01T00:00:08"
-  ),
-  createData(
-    9,
-    "John",
-    "example+9@example.com",
-    "Japan",
-    "2024-01-01T00:00:09",
-    "2024-01-01T00:00:09",
-    "2024-01-01T00:00:09"
-  ),
-  createData(
-    10,
-    "John",
-    "example+10@example.com",
-    "Taiwan",
-    "2024-01-01T00:00:10",
-    "2024-01-01T00:00:10",
-    "2024-01-01T00:00:10"
-  ),
-  createData(
-    11,
-    "John",
-    "example+11@example.com",
-    "South Korea",
-    "2024-01-01T00:00:11",
-    "2024-01-01T00:00:11",
-    "2024-01-01T00:00:11"
-  ),
-  createData(
-    12,
-    "John",
-    "example+12@example.com",
-    "USA",
-    "2024-01-01T00:00:12",
-    "2024-01-01T00:00:12",
-    "2024-01-01T00:00:12"
-  ),
-  createData(
-    13,
-    "John",
-    "example+13@example.com",
-    "Japan",
-    "2024-01-01T00:00:13",
-    "2024-01-01T00:00:13",
-    "2024-01-01T00:00:13"
-  ),
-];
 
 function descendingComparator<T>(a: T, b: T, orderBy: keyof T) {
   if (b[orderBy] < a[orderBy]) {
@@ -252,7 +113,7 @@ interface EnhancedTableProps {
     event: React.MouseEvent<unknown>,
     property: keyof Data
   ) => void;
-  onSelectAllClick: (event: React.ChangeEvent<HTMLInputElement>) => void;
+  // onSelectAllClick: (event: React.ChangeEvent<HTMLInputElement>) => void;
   order: Order;
   orderBy: string;
   rowCount: number;
@@ -309,15 +170,61 @@ function EnhancedTableToolbar(props: EnhancedTableToolbarProps) {
   const isFilterOpened = Boolean(anchorElOfFilter);
   const filterId = isFilterOpened ? "filter-popover" : undefined;
 
-  const [checked, setChecked] = React.useState([true, false]);
-  const handleChange1 = (event: React.ChangeEvent<HTMLInputElement>) => {
-    setChecked([event.target.checked, event.target.checked]);
+  const [checkedCountry, setCheckedCountry] = React.useState([
+    true,
+    true,
+    true,
+    true,
+  ]);
+  const [checkedEligibility, setCheckedEligibility] = React.useState([
+    false,
+    false,
+  ]);
+  const [checkedIndustry, setCheckedIndustry] = React.useState([
+    false,
+    false,
+    false,
+  ]);
+  const [checkedCorrespondingRegion, setCheckedCorrespondingRegion] =
+    React.useState([false, false, false]);
+  const [checkedReliability, setCheckedReliability] = React.useState([
+    false,
+    false,
+  ]);
+  const [checkedSelectionCondition, setCheckedSelectionCondition] =
+    React.useState([
+      false,
+      false,
+      false,
+      false,
+      false,
+      false,
+      false,
+      false,
+      false,
+    ]);
+  const handleCheckboxChange = (
+    checked: boolean,
+    targetIndex: number,
+    setter: React.Dispatch<React.SetStateAction<boolean[]>>
+  ) => {
+    const isAll = targetIndex === -1;
+    if (isAll) {
+      setter((prev) => {
+        return prev.map((checked) => !checked);
+      });
+    } else {
+      setter((prev) => {
+        const newChecked = [...prev];
+        newChecked[targetIndex] = checked;
+
+        return newChecked;
+      });
+    }
   };
-  const handleChange2 = (event: React.ChangeEvent<HTMLInputElement>) => {
-    setChecked([event.target.checked, checked[1]]);
-  };
-  const handleChange3 = (event: React.ChangeEvent<HTMLInputElement>) => {
-    setChecked([checked[0], event.target.checked]);
+
+  const hasDifferentValue = (arr: boolean[]) => {
+    return arr.some((value) => value !== arr[0]);
   };
 
   return (
@@ -379,9 +286,20 @@ function EnhancedTableToolbar(props: EnhancedTableToolbarProps) {
                 label="国"
                 control={
                   <Checkbox
-                    checked={checked[0] && checked[1]}
-                    indeterminate={checked[0] !== checked[1]}
-                    onChange={handleChange1}
+                    checked={
+                      checkedCountry[0] &&
+                      checkedCountry[1] &&
+                      checkedCountry[2] &&
+                      checkedCountry[3]
+                    }
+                    indeterminate={hasDifferentValue(checkedCountry)}
+                    onChange={(e) =>
+                      handleCheckboxChange(
+                        e.target.checked,
+                        -1,
+                        setCheckedCountry
+                      )
+                    }
                   />
                 }
               />
@@ -389,25 +307,61 @@ function EnhancedTableToolbar(props: EnhancedTableToolbarProps) {
                 <FormControlLabel
                   label="Japan"
                   control={
-                    <Checkbox checked={checked[0]} onChange={handleChange2} />
+                    <Checkbox
+                      checked={checkedCountry[0]}
+                      onChange={(e) =>
+                        handleCheckboxChange(
+                          e.target.checked,
+                          0,
+                          setCheckedCountry
+                        )
+                      }
+                    />
                   }
                 />
                 <FormControlLabel
                   label="Taiwan"
                   control={
-                    <Checkbox checked={checked[1]} onChange={handleChange3} />
+                    <Checkbox
+                      checked={checkedCountry[1]}
+                      onChange={(e) =>
+                        handleCheckboxChange(
+                          e.target.checked,
+                          1,
+                          setCheckedCountry
+                        )
+                      }
+                    />
                   }
                 />
                 <FormControlLabel
                   label="South Korea"
                   control={
-                    <Checkbox checked={checked[2]} onChange={handleChange3} />
+                    <Checkbox
+                      checked={checkedCountry[2]}
+                      onChange={(e) =>
+                        handleCheckboxChange(
+                          e.target.checked,
+                          2,
+                          setCheckedCountry
+                        )
+                      }
+                    />
                   }
                 />
                 <FormControlLabel
                   label="USA"
                   control={
-                    <Checkbox checked={checked[3]} onChange={handleChange3} />
+                    <Checkbox
+                      checked={checkedCountry[3]}
+                      onChange={(e) =>
+                        handleCheckboxChange(
+                          e.target.checked,
+                          3,
+                          setCheckedCountry
+                        )
+                      }
+                    />
                   }
                 />
               </Box>
@@ -417,9 +371,15 @@ function EnhancedTableToolbar(props: EnhancedTableToolbarProps) {
                 label="適格性"
                 control={
                   <Checkbox
-                    checked={checked[0] && checked[1]}
-                    indeterminate={checked[0] !== checked[1]}
-                    onChange={handleChange1}
+                    checked={checkedEligibility[0] && checkedEligibility[1]}
+                    indeterminate={hasDifferentValue(checkedEligibility)}
+                    onChange={(e) =>
+                      handleCheckboxChange(
+                        e.target.checked,
+                        -1,
+                        setCheckedEligibility
+                      )
+                    }
                   />
                 }
               />
@@ -427,13 +387,31 @@ function EnhancedTableToolbar(props: EnhancedTableToolbarProps) {
                 <FormControlLabel
                   label="適格"
                   control={
-                    <Checkbox checked={checked[0]} onChange={handleChange2} />
+                    <Checkbox
+                      checked={checkedEligibility[0]}
+                      onChange={(e) =>
+                        handleCheckboxChange(
+                          e.target.checked,
+                          0,
+                          setCheckedEligibility
+                        )
+                      }
+                    />
                   }
                 />
                 <FormControlLabel
                   label="不適格"
                   control={
-                    <Checkbox checked={checked[1]} onChange={handleChange3} />
+                    <Checkbox
+                      checked={checkedEligibility[1]}
+                      onChange={(e) =>
+                        handleCheckboxChange(
+                          e.target.checked,
+                          1,
+                          setCheckedEligibility
+                        )
+                      }
+                    />
                   }
                 />
               </Box>
@@ -443,9 +421,19 @@ function EnhancedTableToolbar(props: EnhancedTableToolbarProps) {
                 label="業種"
                 control={
                   <Checkbox
-                    checked={checked[0] && checked[1]}
-                    indeterminate={checked[0] !== checked[1]}
-                    onChange={handleChange1}
+                    checked={
+                      checkedIndustry[0] &&
+                      checkedIndustry[1] &&
+                      checkedIndustry[2]
+                    }
+                    indeterminate={hasDifferentValue(checkedIndustry)}
+                    onChange={(e) =>
+                      handleCheckboxChange(
+                        e.target.checked,
+                        -1,
+                        setCheckedIndustry
+                      )
+                    }
                   />
                 }
               />
@@ -453,19 +441,46 @@ function EnhancedTableToolbar(props: EnhancedTableToolbarProps) {
                 <FormControlLabel
                   label="建設"
                   control={
-                    <Checkbox checked={checked[0]} onChange={handleChange2} />
+                    <Checkbox
+                      checked={checkedIndustry[0]}
+                      onChange={(e) =>
+                        handleCheckboxChange(
+                          e.target.checked,
+                          0,
+                          setCheckedIndustry
+                        )
+                      }
+                    />
                   }
                 />
                 <FormControlLabel
                   label="医療"
                   control={
-                    <Checkbox checked={checked[1]} onChange={handleChange3} />
+                    <Checkbox
+                      checked={checkedIndustry[1]}
+                      onChange={(e) =>
+                        handleCheckboxChange(
+                          e.target.checked,
+                          1,
+                          setCheckedIndustry
+                        )
+                      }
+                    />
                   }
                 />
                 <FormControlLabel
                   label="航空"
                   control={
-                    <Checkbox checked={checked[1]} onChange={handleChange3} />
+                    <Checkbox
+                      checked={checkedIndustry[2]}
+                      onChange={(e) =>
+                        handleCheckboxChange(
+                          e.target.checked,
+                          2,
+                          setCheckedIndustry
+                        )
+                      }
+                    />
                   }
                 />
               </Box>
@@ -475,9 +490,21 @@ function EnhancedTableToolbar(props: EnhancedTableToolbarProps) {
                 label="該当領域"
                 control={
                   <Checkbox
-                    checked={checked[0] && checked[1]}
-                    indeterminate={checked[0] !== checked[1]}
-                    onChange={handleChange1}
+                    checked={
+                      checkedCorrespondingRegion[0] &&
+                      checkedCorrespondingRegion[1] &&
+                      checkedCorrespondingRegion[2]
+                    }
+                    indeterminate={hasDifferentValue(
+                      checkedCorrespondingRegion
+                    )}
+                    onChange={(e) =>
+                      handleCheckboxChange(
+                        e.target.checked,
+                        -1,
+                        setCheckedCorrespondingRegion
+                      )
+                    }
                   />
                 }
               />
@@ -485,19 +512,46 @@ function EnhancedTableToolbar(props: EnhancedTableToolbarProps) {
                 <FormControlLabel
                   label="建設"
                   control={
-                    <Checkbox checked={checked[0]} onChange={handleChange2} />
+                    <Checkbox
+                      checked={checkedCorrespondingRegion[0]}
+                      onChange={(e) =>
+                        handleCheckboxChange(
+                          e.target.checked,
+                          0,
+                          setCheckedCorrespondingRegion
+                        )
+                      }
+                    />
                   }
                 />
                 <FormControlLabel
                   label="医療"
                   control={
-                    <Checkbox checked={checked[1]} onChange={handleChange3} />
+                    <Checkbox
+                      checked={checkedCorrespondingRegion[1]}
+                      onChange={(e) =>
+                        handleCheckboxChange(
+                          e.target.checked,
+                          1,
+                          setCheckedCorrespondingRegion
+                        )
+                      }
+                    />
                   }
                 />
                 <FormControlLabel
                   label="航空"
                   control={
-                    <Checkbox checked={checked[1]} onChange={handleChange3} />
+                    <Checkbox
+                      checked={checkedCorrespondingRegion[2]}
+                      onChange={(e) =>
+                        handleCheckboxChange(
+                          e.target.checked,
+                          2,
+                          setCheckedCorrespondingRegion
+                        )
+                      }
+                    />
                   }
                 />
               </Box>
@@ -507,9 +561,15 @@ function EnhancedTableToolbar(props: EnhancedTableToolbarProps) {
                 label="サービスローンチの信頼性"
                 control={
                   <Checkbox
-                    checked={checked[0] && checked[1]}
-                    indeterminate={checked[0] !== checked[1]}
-                    onChange={handleChange1}
+                    checked={checkedReliability[0] && checkedReliability[1]}
+                    indeterminate={hasDifferentValue(checkedReliability)}
+                    onChange={(e) =>
+                      handleCheckboxChange(
+                        e.target.checked,
+                        -1,
+                        setCheckedReliability
+                      )
+                    }
                   />
                 }
               />
@@ -517,13 +577,31 @@ function EnhancedTableToolbar(props: EnhancedTableToolbarProps) {
                 <FormControlLabel
                   label="あり"
                   control={
-                    <Checkbox checked={checked[0]} onChange={handleChange2} />
+                    <Checkbox
+                      checked={checkedReliability[0]}
+                      onChange={(e) =>
+                        handleCheckboxChange(
+                          e.target.checked,
+                          0,
+                          setCheckedReliability
+                        )
+                      }
+                    />
                   }
                 />
                 <FormControlLabel
                   label="なし"
                   control={
-                    <Checkbox checked={checked[1]} onChange={handleChange3} />
+                    <Checkbox
+                      checked={checkedReliability[1]}
+                      onChange={(e) =>
+                        handleCheckboxChange(
+                          e.target.checked,
+                          1,
+                          setCheckedReliability
+                        )
+                      }
+                    />
                   }
                 />
               </Box>
@@ -533,9 +611,25 @@ function EnhancedTableToolbar(props: EnhancedTableToolbarProps) {
                 label="選考状態"
                 control={
                   <Checkbox
-                    checked={checked[0] && checked[1]}
-                    indeterminate={checked[0] !== checked[1]}
-                    onChange={handleChange1}
+                    checked={
+                      checkedSelectionCondition[0] &&
+                      checkedSelectionCondition[1] &&
+                      checkedSelectionCondition[2] &&
+                      checkedSelectionCondition[3] &&
+                      checkedSelectionCondition[4] &&
+                      checkedSelectionCondition[5] &&
+                      checkedSelectionCondition[6] &&
+                      checkedSelectionCondition[7] &&
+                      checkedSelectionCondition[8]
+                    }
+                    indeterminate={hasDifferentValue(checkedSelectionCondition)}
+                    onChange={(e) =>
+                      handleCheckboxChange(
+                        e.target.checked,
+                        -1,
+                        setCheckedSelectionCondition
+                      )
+                    }
                   />
                 }
               />
@@ -550,12 +644,21 @@ function EnhancedTableToolbar(props: EnhancedTableToolbarProps) {
                   "最終選考中",
                   "最終選考通過",
                   "最終選考落選",
-                ].map((label) => (
+                ].map((label, index) => (
                   <FormControlLabel
                     key={label}
                     label={label}
                     control={
-                      <Checkbox checked={checked[0]} onChange={handleChange2} />
+                      <Checkbox
+                        checked={checkedSelectionCondition[index]}
+                        onChange={(e) =>
+                          handleCheckboxChange(
+                            e.target.checked,
+                            index,
+                            setCheckedSelectionCondition
+                          )
+                        }
+                      />
                     }
                   />
                 ))}
@@ -573,39 +676,30 @@ export default function EnhancedTable() {
   const [selected, setSelected] = React.useState<readonly number[]>([]);
   const [page, setPage] = React.useState(0);
   const [rowsPerPage, setRowsPerPage] = React.useState(5);
+  const { selectedUser, tableRows, handleTableRowClick } = useModel();
 
   const handleRequestSort = (
     event: React.MouseEvent<unknown>,
     property: keyof Data
   ) => {
+    console.log("property", property);
     const isAsc = orderBy === property && order === "asc";
     setOrder(isAsc ? "desc" : "asc");
     setOrderBy(property);
   };
 
-  const handleSelectAllClick = (event: React.ChangeEvent<HTMLInputElement>) => {
-    if (event.target.checked) {
-      const newSelected = rows.map((n) => n.id);
-      setSelected(newSelected);
-      return;
-    }
-    setSelected([]);
-  };
-
-  const handleChangePage = (event: unknown, newPage: number) => {
-    setPage(newPage);
-  };
-
-  const handleChangeRowsPerPage = (
-    event: React.ChangeEvent<HTMLInputElement>
-  ) => {
-    setRowsPerPage(parseInt(event.target.value, 10));
-    setPage(0);
-  };
+  // const handleSelectAllClick = (event: React.ChangeEvent<HTMLInputElement>) => {
+  //   if (event.target.checked) {
+  //     const newSelected = tableRows.map((n) => n.id);
+  //     setSelected(newSelected);
+  //     return;
+  //   }
+  //   setSelected([]);
+  // };
 
   // Avoid a layout jump when reaching the last page with empty rows.
   const emptyRows =
-    page > 0 ? Math.max(0, (1 + page) * rowsPerPage - rows.length) : 0;
+    page > 0 ? Math.max(0, (1 + page) * rowsPerPage - tableRows.length) : 0;
 
   // const visibleRows = React.useMemo(
   //   () =>
@@ -614,15 +708,10 @@ export default function EnhancedTable() {
   //       .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage),
   //   [order, orderBy, page, rowsPerPage]
   // );
-  const visibleRows = React.useMemo(() => rows, []);
-
-  const [selectedUserId, setSelectedUserId] = React.useState<
-    string | undefined
-  >();
-
-  const handleTableRowClick = () => {
-    setSelectedUserId("1");
-  };
+  const visibleRows = React.useMemo(
+    () => [...tableRows].sort(getComparator(order, orderBy)),
+    [tableRows, order, orderBy]
+  );
 
   const [isMemoExpanded, setIsMemoExpanded] = React.useState<boolean>(false);
 
@@ -669,26 +758,6 @@ export default function EnhancedTable() {
     setSelectionCondition(event.target.value);
   };
 
-  React.useEffect(() => {
-    const abortController = new AbortController();
-
-    window.document.addEventListener(
-      "click",
-      (e) => {
-        console.log((e.target as HTMLElement).closest(".detailTarget"));
-        if (
-          e.target instanceof HTMLElement &&
-          !e.target.closest(".detailTarget")
-        ) {
-          setSelectedUserId(undefined);
-        }
-      },
-      { signal: abortController.signal }
-    );
-
-    return () => abortController.abort();
-  }, []);
-
   return (
     <Box sx={{ width: "100%" }}>
       <Paper sx={{ width: "100%", mb: 2 }}>
@@ -704,25 +773,21 @@ export default function EnhancedTable() {
               numSelected={selected.length}
               order={order}
               orderBy={orderBy}
-              onSelectAllClick={handleSelectAllClick}
               onRequestSort={handleRequestSort}
-              rowCount={rows.length}
+              rowCount={tableRows.length}
             />
             <TableBody>
               {visibleRows.map((row, index) => {
-                const isItemSelected = selected.includes(row.id);
                 const labelId = `enhanced-table-checkbox-${index}`;
 
                 return (
                   <TableRow
                     hover
                     role="checkbox"
-                    aria-checked={isItemSelected}
                     tabIndex={-1}
                     key={row.id}
-                    selected={isItemSelected}
                     sx={{ cursor: "pointer" }}
-                    onClick={handleTableRowClick}
+                    onClick={() => handleTableRowClick(row.id)}
                   >
                     <TableCell>{row.name}</TableCell>
                     <TableCell component="th" id={labelId} scope="row">
@@ -751,7 +816,7 @@ export default function EnhancedTable() {
 
       <Slide
         direction="left"
-        in={!!selectedUserId}
+        in={!!selectedUser}
         mountOnEnter
         unmountOnExit
         className={"detailTarget"}
@@ -780,7 +845,9 @@ export default function EnhancedTable() {
                     <Typography variant="body2">名前</Typography>
                   </Grid>
                   <Grid size={9}>
-                    <Typography variant="body2">John</Typography>
+                    <Typography variant="body2">
+                      {selectedUser?.profile.name}
+                    </Typography>
                   </Grid>
                 </Grid>
 
@@ -789,7 +856,9 @@ export default function EnhancedTable() {
                     <Typography variant="body2">Email</Typography>
                   </Grid>
                   <Grid size={9}>
-                    <Typography variant="body2">example@example.com</Typography>
+                    <Typography variant="body2">
+                      {selectedUser?.profile.email}
+                    </Typography>
                   </Grid>
                 </Grid>
 
@@ -799,7 +868,9 @@ export default function EnhancedTable() {
                   </Grid>
                   <Grid size={9}>
                     <Typography variant="body2">
-                      日本（受付時）/ 台湾（提出時）/ 日本(更新時)
+                      {selectedUser?.profile.country.submittedAt}（受付時）/{" "}
+                      {selectedUser?.profile.country.createdAt}（提出時）/{" "}
+                      {selectedUser?.profile.country.updatedAt}(更新時)
                     </Typography>
                   </Grid>
                 </Grid>
@@ -810,7 +881,7 @@ export default function EnhancedTable() {
                   </Grid>
                   <Grid size={9}>
                     <Typography variant="body2">
-                      36b8f84d-df4e-4d49-b662-bcde71a8764f
+                      {selectedUser?.profile.id}
                     </Typography>
                   </Grid>
                 </Grid>
@@ -825,7 +896,9 @@ export default function EnhancedTable() {
                     <Typography variant="body2">名前</Typography>
                   </Grid>
                   <Grid size={9}>
-                    <Typography variant="body2">株式会社A</Typography>
+                    <Typography variant="body2">
+                      {selectedUser?.organization.name}
+                    </Typography>
                   </Grid>
                 </Grid>
 
@@ -836,11 +909,11 @@ export default function EnhancedTable() {
                   <Grid size={9}>
                     <Link
                       variant="body2"
-                      href="https://example.com"
+                      href={selectedUser?.organization.organizationSite}
                       rel="noopener"
                       target="_blank"
                     >
-                      https://example.com
+                      {selectedUser?.organization.organizationSite}
                     </Link>
                   </Grid>
                 </Grid>
@@ -852,11 +925,11 @@ export default function EnhancedTable() {
                   <Grid size={9}>
                     <Link
                       variant="body2"
-                      href="https://example.com"
+                      href={selectedUser?.organization.serviceSite}
                       rel="noopener"
                       target="_blank"
                     >
-                      https://example.com
+                      {selectedUser?.organization.serviceSite}
                     </Link>
                   </Grid>
                 </Grid>
@@ -867,7 +940,7 @@ export default function EnhancedTable() {
                   </Grid>
                   <Grid size={9}>
                     <Typography variant="body2">
-                      36b8f84d-df4e-4d49-b662-bcde71a8764f
+                      {selectedUser?.organization.id}
                     </Typography>
                   </Grid>
                 </Grid>
@@ -882,30 +955,17 @@ export default function EnhancedTable() {
                     <Typography variant="body2">ファイル</Typography>
                   </Grid>
                   <Grid size={9} container direction={"row"} gap={2}>
-                    <Link
-                      variant="body2"
-                      href="https://example.com"
-                      rel="noopener"
-                      target="_blank"
-                    >
-                      提案1.pdf
-                    </Link>
-                    <Link
-                      variant="body2"
-                      href="https://example.com"
-                      rel="noopener"
-                      target="_blank"
-                    >
-                      提案2.pdf
-                    </Link>
-                    <Link
-                      variant="body2"
-                      href="https://example.com"
-                      rel="noopener"
-                      target="_blank"
-                    >
-                      提案3.pdf
-                    </Link>
+                    {selectedUser?.application.files.map((file) => (
+                      <Link
+                        key={file.url}
+                        variant="body2"
+                        href={file.url}
+                        rel="noopener"
+                        target="_blank"
+                      >
+                        {file.fileName}
+                      </Link>
+                    ))}
                   </Grid>
                 </Grid>
 
@@ -920,14 +980,22 @@ export default function EnhancedTable() {
                         setIsMemoExpanded((currentValue) => !currentValue)
                       }
                     >
-                      メモです。メモです。メモです。メモです。メモです。メモです。メモです。メモです。メモです。メモです。
-                      {isMemoExpanded ? null : "..."}
+                      {selectedUser?.application.memo.slice(0, 50)}
+                      {selectedUser?.application.memo.slice(
+                        50,
+                        selectedUser?.application.memo.length
+                      ) && isMemoExpanded
+                        ? null
+                        : "..."}
                       <Collapse
                         in={isMemoExpanded}
                         timeout="auto"
                         unmountOnExit
                       >
-                        メモです。メモです。メモです。メモです。メモです。メモです。メモです。メモです。メモです。メモです。
+                        {selectedUser?.application.memo.slice(
+                          50,
+                          selectedUser?.application.memo.length
+                        )}
                       </Collapse>
                     </Typography>
                   </Grid>
@@ -936,13 +1004,13 @@ export default function EnhancedTable() {
 
               <Stack>
                 <Typography variant="caption" component={"p"}>
-                  受付日時: 2020/1/1 10:10:10
+                  受付日時: {selectedUser?.submittedAt}
                 </Typography>
                 <Typography variant="caption" component={"p"}>
-                  提出日時: 2020/1/1 10:10:10
+                  提出日時: {selectedUser?.createdAt}
                 </Typography>
                 <Typography variant="caption" component={"p"}>
-                  更新日時: 2020/1/1 10:10:10
+                  更新日時: {selectedUser?.updatedAt}
                 </Typography>
               </Stack>
             </Stack>
