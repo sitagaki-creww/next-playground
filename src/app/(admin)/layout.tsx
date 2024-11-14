@@ -61,7 +61,7 @@ export default function RootLayout({
         >
           <Toolbar>
             <Typography variant="h6" noWrap component="div">
-              Dashboard
+              Management
             </Typography>
             <Box sx={{ flexGrow: 1 }} />
             <Tooltip title="Open settings">
@@ -112,24 +112,24 @@ export default function RootLayout({
             <List>
               <ListItem disablePadding>
                 <ListItemButton
-                  selected={pathname === "/overview"}
-                  onClick={() => router.push("/overview")}
+                  selected={pathname === "/dashboard"}
+                  onClick={() => router.push("/dashboard")}
                 >
                   <ListItemIcon>
                     <BarChartIcon />
                   </ListItemIcon>
-                  <ListItemText primary="Overview" />
+                  <ListItemText primary="Dashboard" />
                 </ListItemButton>
               </ListItem>
               <ListItem disablePadding>
                 <ListItemButton
-                  selected={pathname === "/detail"}
-                  onClick={() => router.push("/detail")}
+                  selected={pathname === "/applications"}
+                  onClick={() => router.push("/applications")}
                 >
                   <ListItemIcon>
                     <TableChartIcon />
                   </ListItemIcon>
-                  <ListItemText primary="Detail" />
+                  <ListItemText primary="Applications" />
                 </ListItemButton>
               </ListItem>
             </List>

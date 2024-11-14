@@ -16,7 +16,7 @@ export default function Home() {
       >
         <BarChartIcon sx={{ fontSize: "inherit" }} />
         <Typography component="h2" sx={{ fontSize: "inherit" }}>
-          Overview
+          Dashboard
         </Typography>
       </Stack>
 

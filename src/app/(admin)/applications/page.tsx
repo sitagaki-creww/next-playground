@@ -13,7 +13,7 @@ export default function Home() {
       >
         <TableChartIcon sx={{ fontSize: "inherit" }} />
         <Typography component="h2" sx={{ fontSize: "inherit" }}>
-          Detail
+          Applications
         </Typography>
       </Stack>
 
