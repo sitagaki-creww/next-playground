@@ -1,6 +1,7 @@
 "use client";
 
 import FilterListIcon from "@mui/icons-material/FilterList";
+import DownloadIcon from "@mui/icons-material/Download";
 import {
   Checkbox,
   Collapse,
@@ -8,8 +9,11 @@ import {
   FormControlLabel,
   FormGroup,
   Link,
+  MenuItem,
   NativeSelect,
   Popover,
+  Select,
+  SelectChangeEvent,
   Slide,
   Stack,
 } from "@mui/material";
@@ -267,7 +271,6 @@ function EnhancedTableToolbar(props: EnhancedTableToolbarProps) {
           <FilterListIcon />
         </IconButton>
       </Tooltip>
-
       <Popover
         id={filterId}
         open={isFilterOpened}
@@ -667,6 +670,12 @@ function EnhancedTableToolbar(props: EnhancedTableToolbarProps) {
           </Stack>
         </Stack>
       </Popover>
+
+      <Tooltip title="Download CSV">
+        <IconButton>
+          <DownloadIcon />
+        </IconButton>
+      </Tooltip>
     </Toolbar>
   );
 }
@@ -715,11 +724,18 @@ export default function EnhancedTable() {
 
   const [isMemoExpanded, setIsMemoExpanded] = React.useState<boolean>(false);
 
-  const [staffName, setStaffName] = React.useState("");
-  const handleStaffNameChange: React.ChangeEventHandler<HTMLSelectElement> = (
-    event
+  const [staffName, setStaffName] = React.useState<string[]>([]);
+  const handleStaffNameChange = (
+    event: React.ChangeEvent<HTMLSelectElement>
   ) => {
-    setStaffName(event.target.value);
+    const { options } = event.target;
+    const value: string[] = [];
+    for (let i = 0, l = options.length; i < l; i += 1) {
+      if (options[i].selected) {
+        value.push(options[i].value);
+      }
+    }
+    setStaffName(value);
   };
 
   const [industry, setIndustry] = React.useState("");
@@ -845,9 +861,18 @@ export default function EnhancedTable() {
                     <Typography variant="body2">名前</Typography>
                   </Grid>
                   <Grid size={9}>
-                    <Typography variant="body2">
-                      {selectedUser?.profile.name}
-                    </Typography>
+                    <Stack spacing={0.5}>
+                      <Typography variant="body2">
+                        {selectedUser?.profile.name}
+                      </Typography>
+                      <Typography
+                        variant="body2"
+                        color="textDisabled"
+                        sx={{ fontSize: 10 }}
+                      >
+                        更新日: 2020/10/11 10:10:10
+                      </Typography>
+                    </Stack>
                   </Grid>
                 </Grid>
 
@@ -896,9 +921,19 @@ export default function EnhancedTable() {
                     <Typography variant="body2">名前</Typography>
                   </Grid>
                   <Grid size={9}>
-                    <Typography variant="body2">
-                      {selectedUser?.organization.name}
-                    </Typography>
+                    <Stack spacing={0.5}>
+                      <Typography variant="body2">
+                        {selectedUser?.organization.name}
+                      </Typography>
+
+                      <Typography
+                        variant="body2"
+                        color="textDisabled"
+                        sx={{ fontSize: 10 }}
+                      >
+                        更新日: 2020/10/11 10:10:10
+                      </Typography>
+                    </Stack>
                   </Grid>
                 </Grid>
 
@@ -907,14 +942,24 @@ export default function EnhancedTable() {
                     <Typography variant="body2">組織サイト</Typography>
                   </Grid>
                   <Grid size={9}>
-                    <Link
-                      variant="body2"
-                      href={selectedUser?.organization.organizationSite}
-                      rel="noopener"
-                      target="_blank"
-                    >
-                      {selectedUser?.organization.organizationSite}
-                    </Link>
+                    <Stack spacing={0.5}>
+                      <Link
+                        variant="body2"
+                        href={selectedUser?.organization.organizationSite}
+                        rel="noopener"
+                        target="_blank"
+                      >
+                        {selectedUser?.organization.organizationSite}
+                      </Link>
+
+                      <Typography
+                        variant="body2"
+                        color="textDisabled"
+                        sx={{ fontSize: 10 }}
+                      >
+                        更新日: 2020/10/11 10:10:10
+                      </Typography>
+                    </Stack>
                   </Grid>
                 </Grid>
 
@@ -923,14 +968,24 @@ export default function EnhancedTable() {
                     <Typography variant="body2">サービスサイト</Typography>
                   </Grid>
                   <Grid size={9}>
-                    <Link
-                      variant="body2"
-                      href={selectedUser?.organization.serviceSite}
-                      rel="noopener"
-                      target="_blank"
-                    >
-                      {selectedUser?.organization.serviceSite}
-                    </Link>
+                    <Stack spacing={0.5}>
+                      <Link
+                        variant="body2"
+                        href={selectedUser?.organization.serviceSite}
+                        rel="noopener"
+                        target="_blank"
+                      >
+                        {selectedUser?.organization.serviceSite}
+                      </Link>
+
+                      <Typography
+                        variant="body2"
+                        color="textDisabled"
+                        sx={{ fontSize: 10 }}
+                      >
+                        更新日: 2020/10/11 10:10:10
+                      </Typography>
+                    </Stack>
                   </Grid>
                 </Grid>
 
@@ -954,18 +1009,29 @@ export default function EnhancedTable() {
                   <Grid size={3}>
                     <Typography variant="body2">ファイル</Typography>
                   </Grid>
-                  <Grid size={9} container direction={"row"} gap={2}>
-                    {selectedUser?.application.files.map((file) => (
-                      <Link
-                        key={file.url}
-                        variant="body2"
-                        href={file.url}
-                        rel="noopener"
-                        target="_blank"
-                      >
-                        {file.fileName}
-                      </Link>
-                    ))}
+                  <Grid size={9}>
+                    <Stack spacing={1}>
+                      {selectedUser?.application.files.map((file) => (
+                        <Stack spacing={0.5} key={file.url}>
+                          <Link
+                            variant="body2"
+                            href={file.url}
+                            rel="noopener"
+                            target="_blank"
+                          >
+                            {file.fileName}
+                          </Link>
+
+                          <Typography
+                            variant="body2"
+                            color="textDisabled"
+                            sx={{ fontSize: 10 }}
+                          >
+                            更新日: 2020/10/11 10:10:10
+                          </Typography>
+                        </Stack>
+                      ))}
+                    </Stack>
                   </Grid>
                 </Grid>
 
@@ -974,30 +1040,277 @@ export default function EnhancedTable() {
                     <Typography variant="body2">メモ</Typography>
                   </Grid>
                   <Grid size={9}>
-                    <Typography
-                      variant="body2"
-                      onClick={() =>
-                        setIsMemoExpanded((currentValue) => !currentValue)
-                      }
-                    >
-                      {selectedUser?.application.memo.slice(0, 50)}
-                      {selectedUser?.application.memo.slice(
-                        50,
-                        selectedUser?.application.memo.length
-                      ) && isMemoExpanded
-                        ? null
-                        : "..."}
-                      <Collapse
-                        in={isMemoExpanded}
-                        timeout="auto"
-                        unmountOnExit
+                    <Stack spacing={0.5}>
+                      <Box bgcolor={"#EEEEEE"} sx={{ p: 1 }} borderRadius={1}>
+                        <Typography
+                          variant="body2"
+                          onClick={() =>
+                            setIsMemoExpanded((currentValue) => !currentValue)
+                          }
+                        >
+                          {selectedUser?.application.memo.slice(0, 50)}
+                          {selectedUser?.application.memo.slice(
+                            50,
+                            selectedUser?.application.memo.length
+                          ) && isMemoExpanded
+                            ? null
+                            : "..."}
+                          <Collapse
+                            in={isMemoExpanded}
+                            timeout="auto"
+                            unmountOnExit
+                          >
+                            {selectedUser?.application.memo.slice(
+                              50,
+                              selectedUser?.application.memo.length
+                            )}
+                          </Collapse>
+                        </Typography>
+                      </Box>
+
+                      <Typography
+                        variant="body2"
+                        color="textDisabled"
+                        sx={{ fontSize: 10 }}
                       >
-                        {selectedUser?.application.memo.slice(
-                          50,
-                          selectedUser?.application.memo.length
-                        )}
-                      </Collapse>
+                        更新日: 2020/10/11 10:10:10
+                      </Typography>
+                    </Stack>
+                  </Grid>
+                </Grid>
+
+                <Grid spacing={1} direction={"row"} container>
+                  <Grid size={3}>
+                    <Typography variant="body2">
+                      サービスローンチ有無
                     </Typography>
+                  </Grid>
+                  <Grid size={9}>
+                    <Stack spacing={0.5}>
+                      <Box bgcolor={"#EEEEEE"} sx={{ p: 1 }} borderRadius={1}>
+                        <Typography
+                          variant="body2"
+                          onClick={() =>
+                            setIsMemoExpanded((currentValue) => !currentValue)
+                          }
+                        >
+                          {selectedUser?.application.memo.slice(0, 50)}
+                          {selectedUser?.application.memo.slice(
+                            50,
+                            selectedUser?.application.memo.length
+                          ) && isMemoExpanded
+                            ? null
+                            : "..."}
+                          <Collapse
+                            in={isMemoExpanded}
+                            timeout="auto"
+                            unmountOnExit
+                          >
+                            {selectedUser?.application.memo.slice(
+                              50,
+                              selectedUser?.application.memo.length
+                            )}
+                          </Collapse>
+                        </Typography>
+                      </Box>
+
+                      <Typography
+                        variant="body2"
+                        color="textDisabled"
+                        sx={{ fontSize: 10 }}
+                      >
+                        更新日: 2020/10/11 10:10:10
+                      </Typography>
+                    </Stack>
+                  </Grid>
+                </Grid>
+
+                <Grid spacing={1} direction={"row"} container>
+                  <Grid size={3}>
+                    <Typography variant="body2">国内実績有無</Typography>
+                  </Grid>
+                  <Grid size={9}>
+                    <Stack spacing={0.5}>
+                      <Box bgcolor={"#EEEEEE"} sx={{ p: 1 }} borderRadius={1}>
+                        <Typography
+                          variant="body2"
+                          onClick={() =>
+                            setIsMemoExpanded((currentValue) => !currentValue)
+                          }
+                        >
+                          {selectedUser?.application.memo.slice(0, 50)}
+                          {selectedUser?.application.memo.slice(
+                            50,
+                            selectedUser?.application.memo.length
+                          ) && isMemoExpanded
+                            ? null
+                            : "..."}
+                          <Collapse
+                            in={isMemoExpanded}
+                            timeout="auto"
+                            unmountOnExit
+                          >
+                            {selectedUser?.application.memo.slice(
+                              50,
+                              selectedUser?.application.memo.length
+                            )}
+                          </Collapse>
+                        </Typography>
+                      </Box>
+
+                      <Typography
+                        variant="body2"
+                        color="textDisabled"
+                        sx={{ fontSize: 10 }}
+                      >
+                        更新日: 2020/10/11 10:10:10
+                      </Typography>
+                    </Stack>
+                  </Grid>
+                </Grid>
+
+                <Grid spacing={1} direction={"row"} container>
+                  <Grid size={3}>
+                    <Typography variant="body2">海外実績有無</Typography>
+                  </Grid>
+                  <Grid size={9}>
+                    <Stack spacing={0.5}>
+                      <Box bgcolor={"#EEEEEE"} sx={{ p: 1 }} borderRadius={1}>
+                        <Typography
+                          variant="body2"
+                          onClick={() =>
+                            setIsMemoExpanded((currentValue) => !currentValue)
+                          }
+                        >
+                          {selectedUser?.application.memo.slice(0, 50)}
+                          {selectedUser?.application.memo.slice(
+                            50,
+                            selectedUser?.application.memo.length
+                          ) && isMemoExpanded
+                            ? null
+                            : "..."}
+                          <Collapse
+                            in={isMemoExpanded}
+                            timeout="auto"
+                            unmountOnExit
+                          >
+                            {selectedUser?.application.memo.slice(
+                              50,
+                              selectedUser?.application.memo.length
+                            )}
+                          </Collapse>
+                        </Typography>
+                      </Box>
+
+                      <Typography
+                        variant="body2"
+                        color="textDisabled"
+                        sx={{ fontSize: 10 }}
+                      >
+                        更新日: 2020/10/11 10:10:10
+                      </Typography>
+                    </Stack>
+                  </Grid>
+                </Grid>
+
+                <Grid spacing={1} direction={"row"} container>
+                  <Grid size={3}>
+                    <Typography variant="body2">英語話者の有無</Typography>
+                  </Grid>
+                  <Grid size={9}>
+                    <Stack spacing={0.5}>
+                      <Box bgcolor={"#EEEEEE"} sx={{ p: 1 }} borderRadius={1}>
+                        <Typography
+                          variant="body2"
+                          onClick={() =>
+                            setIsMemoExpanded((currentValue) => !currentValue)
+                          }
+                        >
+                          {selectedUser?.application.memo.slice(0, 50)}
+                          {selectedUser?.application.memo.slice(
+                            50,
+                            selectedUser?.application.memo.length
+                          ) && isMemoExpanded
+                            ? null
+                            : "..."}
+                          <Collapse
+                            in={isMemoExpanded}
+                            timeout="auto"
+                            unmountOnExit
+                          >
+                            {selectedUser?.application.memo.slice(
+                              50,
+                              selectedUser?.application.memo.length
+                            )}
+                          </Collapse>
+                        </Typography>
+                      </Box>
+
+                      <Typography
+                        variant="body2"
+                        color="textDisabled"
+                        sx={{ fontSize: 10 }}
+                      >
+                        更新日: 2020/10/11 10:10:10
+                      </Typography>
+                    </Stack>
+                  </Grid>
+                </Grid>
+
+                <Grid spacing={1} direction={"row"} container>
+                  <Grid size={3}>
+                    <Typography variant="body2">調達累計金額（USD）</Typography>
+                  </Grid>
+                  <Grid size={9}>
+                    <Stack spacing={0.5}>
+                      <Typography variant="body2">10000</Typography>
+
+                      <Typography
+                        variant="body2"
+                        color="textDisabled"
+                        sx={{ fontSize: 10 }}
+                      >
+                        更新日: 2020/10/11 10:10:10
+                      </Typography>
+                    </Stack>
+                  </Grid>
+                </Grid>
+
+                <Grid spacing={1} direction={"row"} container>
+                  <Grid size={3}>
+                    <Typography variant="body2">ラウンド</Typography>
+                  </Grid>
+                  <Grid size={9}>
+                    <Stack spacing={0.5}>
+                      <Typography variant="body2">シード</Typography>
+
+                      <Typography
+                        variant="body2"
+                        color="textDisabled"
+                        sx={{ fontSize: 10 }}
+                      >
+                        更新日: 2020/10/11 10:10:10
+                      </Typography>
+                    </Stack>
+                  </Grid>
+                </Grid>
+
+                <Grid spacing={1} direction={"row"} container>
+                  <Grid size={3}>
+                    <Typography variant="body2">設立年次</Typography>
+                  </Grid>
+                  <Grid size={9}>
+                    <Stack spacing={0.5}>
+                      <Typography variant="body2">2019</Typography>
+
+                      <Typography
+                        variant="body2"
+                        color="textDisabled"
+                        sx={{ fontSize: 10 }}
+                      >
+                        更新日: 2020/10/11 10:10:10
+                      </Typography>
+                    </Stack>
                   </Grid>
                 </Grid>
               </Stack>
@@ -1042,18 +1355,29 @@ export default function EnhancedTable() {
                     </Grid>
                     <Grid>
                       <FormControl sx={{ minWidth: 120 }} size="small">
-                        <NativeSelect
+                        <Select<string[]>
+                          multiple
+                          native
                           value={staffName}
+                          // @ts-ignore Typings are not considering `native`
                           onChange={handleStaffNameChange}
-                          className={"detailTarget"}
+                          inputProps={{
+                            id: "select-multiple-native",
+                          }}
+                          size="small"
                         >
-                          <option value="">
-                            <em>未設定</em>
-                          </option>
-                          <option value={10}>久留卯 一郎</option>
-                          <option value={20}>久留卯 二郎</option>
-                          <option value={30}>久留卯 三郎</option>
-                        </NativeSelect>
+                          {[
+                            "久留卯 一郎",
+                            "久留卯 二郎",
+                            "久留卯 三郎",
+                            "久留卯 四郎",
+                            "久留卯 五郎",
+                          ].map((name) => (
+                            <option key={name} value={name}>
+                              {name}
+                            </option>
+                          ))}
+                        </Select>
                       </FormControl>
                     </Grid>
                   </Grid>
@@ -1194,15 +1518,12 @@ export default function EnhancedTable() {
                           <option value="">
                             <em>未設定</em>
                           </option>
-                          <option value={10}>1次選考中</option>
-                          <option value={11}>1次選考通過</option>
-                          <option value={12}>1次選考落選</option>
-                          <option value={20}>2次選考中</option>
-                          <option value={21}>2次選考通過</option>
-                          <option value={22}>2次選考落選</option>
-                          <option value={30}>最終選考中</option>
-                          <option value={31}>最終選考通過</option>
-                          <option value={32}>最終選考落選</option>
+                          <option value={10}>1次選考通過</option>
+                          <option value={15}>1次選考落選</option>
+                          <option value={20}>2次選考通過</option>
+                          <option value={25}>2次選考落選</option>
+                          <option value={30}>最終選考通過</option>
+                          <option value={35}>最終選考落選</option>
                         </NativeSelect>
                       </FormControl>
                     </Grid>
