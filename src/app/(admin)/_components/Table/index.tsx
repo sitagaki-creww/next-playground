@@ -2,13 +2,21 @@
 
 import FilterListIcon from "@mui/icons-material/FilterList";
 import DownloadIcon from "@mui/icons-material/Download";
+import SendIcon from "@mui/icons-material/Send";
 import {
+  Avatar,
+  Button,
   Checkbox,
   Collapse,
+  Divider,
   FormControl,
   FormControlLabel,
   FormGroup,
   Link,
+  List,
+  ListItem,
+  ListItemAvatar,
+  ListItemText,
   MenuItem,
   NativeSelect,
   Popover,
@@ -16,6 +24,7 @@ import {
   SelectChangeEvent,
   Slide,
   Stack,
+  TextField,
 } from "@mui/material";
 import Box from "@mui/material/Box";
 import Grid from "@mui/material/Grid2";
@@ -1259,11 +1268,11 @@ export default function EnhancedTable() {
 
                 <Grid spacing={1} direction={"row"} container>
                   <Grid size={3}>
-                    <Typography variant="body2">調達累計金額（USD）</Typography>
+                    <Typography variant="body2">調達累計金額</Typography>
                   </Grid>
                   <Grid size={9}>
                     <Stack spacing={0.5}>
-                      <Typography variant="body2">10000</Typography>
+                      <Typography variant="body2">10000円</Typography>
 
                       <Typography
                         variant="body2"
@@ -1528,6 +1537,62 @@ export default function EnhancedTable() {
                       </FormControl>
                     </Grid>
                   </Grid>
+                </Stack>
+
+                <Stack spacing={1.5}>
+                  <Typography variant="subtitle1" fontWeight={"600"}>
+                    コメント
+                  </Typography>
+
+                  <Stack spacing={1}>
+                    <TextField
+                      id="outlined-basic"
+                      variant="outlined"
+                      multiline
+                      fullWidth
+                    />
+                    <Button
+                      variant="contained"
+                      endIcon={<SendIcon />}
+                      size="small"
+                      sx={{ alignSelf: "flex-start" }}
+                    >
+                      Send
+                    </Button>
+                  </Stack>
+
+                  <List
+                    sx={{
+                      width: "100%",
+                    }}
+                  >
+                    <ListItem alignItems="flex-start">
+                      <ListItemAvatar>
+                        <Avatar
+                          alt="Taisuke Itagaki"
+                          src="/static/images/avatar/1.jpg"
+                        />
+                      </ListItemAvatar>
+                      <ListItemText
+                        primary="よくないと思うけどまあいいとも思うので一次選考に関しては通してもいいようなよくないようなでもなんとも言えない気もする🤔"
+                        secondary={"2020/11/10 10:10:10"}
+                      />
+                    </ListItem>
+                    <Divider variant="inset" component="li" />
+                    <ListItem alignItems="flex-start">
+                      <ListItemAvatar>
+                        <Avatar
+                          alt="Norman reedus"
+                          src="/static/images/avatar/1.jpg"
+                        />
+                      </ListItemAvatar>
+                      <ListItemText
+                        primary="これはなんともいえないけれどなんともいえないです。ですので安易に採用にしてはいけないようなきがしないでもないような。でもいいと思います🌷"
+                        secondary={"2020/10/10 10:10:10"}
+                      />
+                    </ListItem>
+                    <Divider variant="inset" component="li" />
+                  </List>
                 </Stack>
               </Stack>
             </Stack>
