@@ -1,9 +1,9 @@
 import BarChartIcon from "@mui/icons-material/BarChart";
 import { Box, Stack, Typography } from "@mui/material";
 import Paper from "@mui/material/Paper";
-import CustomLineChart from "../_components/CustomLineChart";
-import HorizontalBars from "../_components/HorizontalBars";
-import RowDivider from "../_components/RowDivider";
+import CustomLineChart from "../../_components/CustomLineChart";
+import HorizontalBars from "../../_components/HorizontalBars";
+import RowDivider from "../../_components/RowDivider";
 
 export default function Home() {
   return (

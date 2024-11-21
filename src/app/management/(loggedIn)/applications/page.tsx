@@ -1,6 +1,6 @@
 import TableChartIcon from "@mui/icons-material/TableChart";
 import { Stack, Typography } from "@mui/material";
-import Table from "../_components/Table";
+import Table from "../../_components/Table";
 
 export default function Home() {
   return (
