@@ -81,626 +81,19 @@ function getComparator<Key extends keyof any>(
     : (a, b) => -descendingComparator(a, b, orderBy);
 }
 
-interface HeadCell {
-  id: keyof Data;
-  label: string;
-  numeric: boolean;
-}
-
-const headCells: readonly HeadCell[] = [
-  {
-    id: "name",
-    numeric: false,
-    label: "名前",
-  },
-  {
-    id: "email",
-    numeric: false,
-    label: "Email",
-  },
-  {
-    id: "country",
-    numeric: false,
-    label: "国",
-  },
-  {
-    id: "submittedAt",
-    numeric: false,
-    label: "受付日時",
-  },
-  {
-    id: "createdAt",
-    numeric: false,
-    label: "提出日時",
-  },
-  {
-    id: "updatedAt",
-    numeric: false,
-    label: "更新日時",
-  },
-];
-
-interface EnhancedTableProps {
-  numSelected: number;
-  onRequestSort: (
-    event: React.MouseEvent<unknown>,
-    property: keyof Data
-  ) => void;
-  // onSelectAllClick: (event: React.ChangeEvent<HTMLInputElement>) => void;
-  order: Order;
-  orderBy: string;
-  rowCount: number;
-}
-
-function EnhancedTableHead(props: EnhancedTableProps) {
-  const { order, orderBy, onRequestSort } = props;
-  const createSortHandler =
-    (property: keyof Data) => (event: React.MouseEvent<unknown>) => {
-      onRequestSort(event, property);
-    };
-
-  return (
-    <TableHead>
-      <TableRow>
-        {headCells.map((headCell) => (
-          <TableCell
-            key={headCell.id}
-            align={headCell.numeric ? "right" : "left"}
-            sortDirection={orderBy === headCell.id ? order : false}
-          >
-            <TableSortLabel
-              active={orderBy === headCell.id}
-              direction={orderBy === headCell.id ? order : "asc"}
-              onClick={createSortHandler(headCell.id)}
-            >
-              {headCell.label}
-              {orderBy === headCell.id ? (
-                <Box component="span" sx={visuallyHidden}>
-                  {order === "desc" ? "sorted descending" : "sorted ascending"}
-                </Box>
-              ) : null}
-            </TableSortLabel>
-          </TableCell>
-        ))}
-      </TableRow>
-    </TableHead>
-  );
-}
-interface EnhancedTableToolbarProps {
-  numSelected: number;
-}
-function EnhancedTableToolbar(props: EnhancedTableToolbarProps) {
-  const { numSelected } = props;
-
-  const [anchorElOfFilter, setAnchorElOfFilter] =
-    React.useState<HTMLButtonElement | null>(null);
-  const handleFilterOpen = (event: React.MouseEvent<HTMLButtonElement>) => {
-    setAnchorElOfFilter(event.currentTarget);
-  };
-  const handleFilterClose = () => {
-    setAnchorElOfFilter(null);
-  };
-  const isFilterOpened = Boolean(anchorElOfFilter);
-  const filterId = isFilterOpened ? "filter-popover" : undefined;
-
-  const [checkedCountry, setCheckedCountry] = React.useState([
-    true,
-    true,
-    true,
-    true,
-  ]);
-  const [checkedEligibility, setCheckedEligibility] = React.useState([
-    false,
-    false,
-  ]);
-  const [checkedIndustry, setCheckedIndustry] = React.useState([
-    false,
-    false,
-    false,
-  ]);
-  const [checkedCorrespondingRegion, setCheckedCorrespondingRegion] =
-    React.useState([false, false, false]);
-  const [checkedReliability, setCheckedReliability] = React.useState([
-    false,
-    false,
-  ]);
-  const [checkedSelectionCondition, setCheckedSelectionCondition] =
-    React.useState([
-      false,
-      false,
-      false,
-      false,
-      false,
-      false,
-      false,
-      false,
-      false,
-    ]);
-  const handleCheckboxChange = (
-    checked: boolean,
-    targetIndex: number,
-    setter: React.Dispatch<React.SetStateAction<boolean[]>>
-  ) => {
-    const isAll = targetIndex === -1;
-    if (isAll) {
-      setter((prev) => {
-        return prev.map((checked) => !checked);
-      });
-    } else {
-      setter((prev) => {
-        const newChecked = [...prev];
-        newChecked[targetIndex] = checked;
-
-        return newChecked;
-      });
-    }
-  };
-
-  const hasDifferentValue = (arr: boolean[]) => {
-    return arr.some((value) => value !== arr[0]);
-  };
-
-  return (
-    <Toolbar
-      sx={[
-        {
-          pl: { sm: 2 },
-          pr: { xs: 1, sm: 1 },
-        },
-        numSelected > 0 && {
-          bgcolor: (theme) =>
-            alpha(
-              theme.palette.primary.main,
-              theme.palette.action.activatedOpacity
-            ),
-        },
-      ]}
-    >
-      {numSelected > 0 ? (
-        <Typography
-          sx={{ flex: "1 1 100%" }}
-          color="inherit"
-          variant="subtitle1"
-          component="div"
-        >
-          {numSelected} selected
-        </Typography>
-      ) : (
-        <Typography
-          sx={{ flex: "1 1 100%" }}
-          variant="h6"
-          id="tableTitle"
-          component="div"
-        >
-          応募一覧
-        </Typography>
-      )}
-      <Tooltip title="Filter list">
-        <IconButton onClick={handleFilterOpen} aria-describedby={filterId}>
-          <FilterListIcon />
-        </IconButton>
-      </Tooltip>
-      <Popover
-        id={filterId}
-        open={isFilterOpened}
-        anchorEl={anchorElOfFilter}
-        onClose={handleFilterClose}
-        anchorOrigin={{
-          vertical: "bottom",
-          horizontal: "left",
-        }}
-      >
-        <Stack sx={{ padding: 2 }} spacing={2}>
-          <Typography variant="h6">絞り込み</Typography>
-          <Stack direction={"row"} divider={<ColumnDivider />} spacing={1}>
-            <Box>
-              <FormControlLabel
-                label="国"
-                control={
-                  <Checkbox
-                    checked={
-                      checkedCountry[0] &&
-                      checkedCountry[1] &&
-                      checkedCountry[2] &&
-                      checkedCountry[3]
-                    }
-                    indeterminate={hasDifferentValue(checkedCountry)}
-                    onChange={(e) =>
-                      handleCheckboxChange(
-                        e.target.checked,
-                        -1,
-                        setCheckedCountry
-                      )
-                    }
-                  />
-                }
-              />
-              <Box sx={{ display: "flex", flexDirection: "column", ml: 3 }}>
-                <FormControlLabel
-                  label="Japan"
-                  control={
-                    <Checkbox
-                      checked={checkedCountry[0]}
-                      onChange={(e) =>
-                        handleCheckboxChange(
-                          e.target.checked,
-                          0,
-                          setCheckedCountry
-                        )
-                      }
-                    />
-                  }
-                />
-                <FormControlLabel
-                  label="Taiwan"
-                  control={
-                    <Checkbox
-                      checked={checkedCountry[1]}
-                      onChange={(e) =>
-                        handleCheckboxChange(
-                          e.target.checked,
-                          1,
-                          setCheckedCountry
-                        )
-                      }
-                    />
-                  }
-                />
-                <FormControlLabel
-                  label="South Korea"
-                  control={
-                    <Checkbox
-                      checked={checkedCountry[2]}
-                      onChange={(e) =>
-                        handleCheckboxChange(
-                          e.target.checked,
-                          2,
-                          setCheckedCountry
-                        )
-                      }
-                    />
-                  }
-                />
-                <FormControlLabel
-                  label="USA"
-                  control={
-                    <Checkbox
-                      checked={checkedCountry[3]}
-                      onChange={(e) =>
-                        handleCheckboxChange(
-                          e.target.checked,
-                          3,
-                          setCheckedCountry
-                        )
-                      }
-                    />
-                  }
-                />
-              </Box>
-            </Box>
-            <Box>
-              <FormControlLabel
-                label="適格性"
-                control={
-                  <Checkbox
-                    checked={checkedEligibility[0] && checkedEligibility[1]}
-                    indeterminate={hasDifferentValue(checkedEligibility)}
-                    onChange={(e) =>
-                      handleCheckboxChange(
-                        e.target.checked,
-                        -1,
-                        setCheckedEligibility
-                      )
-                    }
-                  />
-                }
-              />
-              <Box sx={{ display: "flex", flexDirection: "column", ml: 3 }}>
-                <FormControlLabel
-                  label="適格"
-                  control={
-                    <Checkbox
-                      checked={checkedEligibility[0]}
-                      onChange={(e) =>
-                        handleCheckboxChange(
-                          e.target.checked,
-                          0,
-                          setCheckedEligibility
-                        )
-                      }
-                    />
-                  }
-                />
-                <FormControlLabel
-                  label="不適格"
-                  control={
-                    <Checkbox
-                      checked={checkedEligibility[1]}
-                      onChange={(e) =>
-                        handleCheckboxChange(
-                          e.target.checked,
-                          1,
-                          setCheckedEligibility
-                        )
-                      }
-                    />
-                  }
-                />
-              </Box>
-            </Box>
-            <Box>
-              <FormControlLabel
-                label="業種"
-                control={
-                  <Checkbox
-                    checked={
-                      checkedIndustry[0] &&
-                      checkedIndustry[1] &&
-                      checkedIndustry[2]
-                    }
-                    indeterminate={hasDifferentValue(checkedIndustry)}
-                    onChange={(e) =>
-                      handleCheckboxChange(
-                        e.target.checked,
-                        -1,
-                        setCheckedIndustry
-                      )
-                    }
-                  />
-                }
-              />
-              <Box sx={{ display: "flex", flexDirection: "column", ml: 3 }}>
-                <FormControlLabel
-                  label="建設"
-                  control={
-                    <Checkbox
-                      checked={checkedIndustry[0]}
-                      onChange={(e) =>
-                        handleCheckboxChange(
-                          e.target.checked,
-                          0,
-                          setCheckedIndustry
-                        )
-                      }
-                    />
-                  }
-                />
-                <FormControlLabel
-                  label="医療"
-                  control={
-                    <Checkbox
-                      checked={checkedIndustry[1]}
-                      onChange={(e) =>
-                        handleCheckboxChange(
-                          e.target.checked,
-                          1,
-                          setCheckedIndustry
-                        )
-                      }
-                    />
-                  }
-                />
-                <FormControlLabel
-                  label="航空"
-                  control={
-                    <Checkbox
-                      checked={checkedIndustry[2]}
-                      onChange={(e) =>
-                        handleCheckboxChange(
-                          e.target.checked,
-                          2,
-                          setCheckedIndustry
-                        )
-                      }
-                    />
-                  }
-                />
-              </Box>
-            </Box>
-            <Box>
-              <FormControlLabel
-                label="該当領域"
-                control={
-                  <Checkbox
-                    checked={
-                      checkedCorrespondingRegion[0] &&
-                      checkedCorrespondingRegion[1] &&
-                      checkedCorrespondingRegion[2]
-                    }
-                    indeterminate={hasDifferentValue(
-                      checkedCorrespondingRegion
-                    )}
-                    onChange={(e) =>
-                      handleCheckboxChange(
-                        e.target.checked,
-                        -1,
-                        setCheckedCorrespondingRegion
-                      )
-                    }
-                  />
-                }
-              />
-              <Box sx={{ display: "flex", flexDirection: "column", ml: 3 }}>
-                <FormControlLabel
-                  label="建設"
-                  control={
-                    <Checkbox
-                      checked={checkedCorrespondingRegion[0]}
-                      onChange={(e) =>
-                        handleCheckboxChange(
-                          e.target.checked,
-                          0,
-                          setCheckedCorrespondingRegion
-                        )
-                      }
-                    />
-                  }
-                />
-                <FormControlLabel
-                  label="医療"
-                  control={
-                    <Checkbox
-                      checked={checkedCorrespondingRegion[1]}
-                      onChange={(e) =>
-                        handleCheckboxChange(
-                          e.target.checked,
-                          1,
-                          setCheckedCorrespondingRegion
-                        )
-                      }
-                    />
-                  }
-                />
-                <FormControlLabel
-                  label="航空"
-                  control={
-                    <Checkbox
-                      checked={checkedCorrespondingRegion[2]}
-                      onChange={(e) =>
-                        handleCheckboxChange(
-                          e.target.checked,
-                          2,
-                          setCheckedCorrespondingRegion
-                        )
-                      }
-                    />
-                  }
-                />
-              </Box>
-            </Box>
-            <Box>
-              <FormControlLabel
-                label="サービスローンチの信頼性"
-                control={
-                  <Checkbox
-                    checked={checkedReliability[0] && checkedReliability[1]}
-                    indeterminate={hasDifferentValue(checkedReliability)}
-                    onChange={(e) =>
-                      handleCheckboxChange(
-                        e.target.checked,
-                        -1,
-                        setCheckedReliability
-                      )
-                    }
-                  />
-                }
-              />
-              <Box sx={{ display: "flex", flexDirection: "column", ml: 3 }}>
-                <FormControlLabel
-                  label="あり"
-                  control={
-                    <Checkbox
-                      checked={checkedReliability[0]}
-                      onChange={(e) =>
-                        handleCheckboxChange(
-                          e.target.checked,
-                          0,
-                          setCheckedReliability
-                        )
-                      }
-                    />
-                  }
-                />
-                <FormControlLabel
-                  label="なし"
-                  control={
-                    <Checkbox
-                      checked={checkedReliability[1]}
-                      onChange={(e) =>
-                        handleCheckboxChange(
-                          e.target.checked,
-                          1,
-                          setCheckedReliability
-                        )
-                      }
-                    />
-                  }
-                />
-              </Box>
-            </Box>
-            <Box>
-              <FormControlLabel
-                label="選考状態"
-                control={
-                  <Checkbox
-                    checked={
-                      checkedSelectionCondition[0] &&
-                      checkedSelectionCondition[1] &&
-                      checkedSelectionCondition[2] &&
-                      checkedSelectionCondition[3] &&
-                      checkedSelectionCondition[4] &&
-                      checkedSelectionCondition[5] &&
-                      checkedSelectionCondition[6] &&
-                      checkedSelectionCondition[7] &&
-                      checkedSelectionCondition[8]
-                    }
-                    indeterminate={hasDifferentValue(checkedSelectionCondition)}
-                    onChange={(e) =>
-                      handleCheckboxChange(
-                        e.target.checked,
-                        -1,
-                        setCheckedSelectionCondition
-                      )
-                    }
-                  />
-                }
-              />
-              <Box sx={{ display: "flex", flexDirection: "column", ml: 3 }}>
-                {[
-                  "1次選考中",
-                  "1次選考通過",
-                  "1次選考落選",
-                  "2次選考中",
-                  "2次選考通過",
-                  "2次選考落選",
-                  "最終選考中",
-                  "最終選考通過",
-                  "最終選考落選",
-                ].map((label, index) => (
-                  <FormControlLabel
-                    key={label}
-                    label={label}
-                    control={
-                      <Checkbox
-                        checked={checkedSelectionCondition[index]}
-                        onChange={(e) =>
-                          handleCheckboxChange(
-                            e.target.checked,
-                            index,
-                            setCheckedSelectionCondition
-                          )
-                        }
-                      />
-                    }
-                  />
-                ))}
-              </Box>
-            </Box>
-          </Stack>
-        </Stack>
-      </Popover>
-
-      <Tooltip title="Download CSV">
-        <IconButton>
-          <DownloadIcon />
-        </IconButton>
-      </Tooltip>
-    </Toolbar>
-  );
-}
 export default function EnhancedTable() {
   const [order, setOrder] = React.useState<Order>("asc");
   const [orderBy, setOrderBy] = React.useState<keyof Data>("updatedAt");
   const [selected, setSelected] = React.useState<readonly number[]>([]);
   const [page, setPage] = React.useState(0);
   const [rowsPerPage, setRowsPerPage] = React.useState(5);
-  const { selectedUser, tableRows, handleTableRowClick } = useModel();
+  const { HEAD_CELLS, selectedUser, tableRows, handleTableRowClick } =
+    useModel();
 
   const handleRequestSort = (
     event: React.MouseEvent<unknown>,
     property: keyof Data
   ) => {
-    console.log("property", property);
     const isAsc = orderBy === property && order === "asc";
     setOrder(isAsc ? "desc" : "asc");
     setOrderBy(property);
@@ -783,10 +176,532 @@ export default function EnhancedTable() {
     setSelectionCondition(event.target.value);
   };
 
+  const createSortHandler =
+    (property: keyof Data) => (event: React.MouseEvent<unknown>) => {
+      handleRequestSort(event, property);
+    };
+
+  const numSelected = selected.length;
+
+  const [anchorElOfFilter, setAnchorElOfFilter] =
+    React.useState<HTMLButtonElement | null>(null);
+  const handleFilterOpen = (event: React.MouseEvent<HTMLButtonElement>) => {
+    setAnchorElOfFilter(event.currentTarget);
+  };
+  const handleFilterClose = () => {
+    setAnchorElOfFilter(null);
+  };
+  const isFilterOpened = Boolean(anchorElOfFilter);
+  const filterId = isFilterOpened ? "filter-popover" : undefined;
+
+  const [checkedCountry, setCheckedCountry] = React.useState([
+    true,
+    true,
+    true,
+    true,
+  ]);
+  const [checkedEligibility, setCheckedEligibility] = React.useState([
+    false,
+    false,
+  ]);
+  const [checkedIndustry, setCheckedIndustry] = React.useState([
+    false,
+    false,
+    false,
+  ]);
+  const [checkedCorrespondingRegion, setCheckedCorrespondingRegion] =
+    React.useState([false, false, false]);
+  const [checkedReliability, setCheckedReliability] = React.useState([
+    false,
+    false,
+  ]);
+  const [checkedSelectionCondition, setCheckedSelectionCondition] =
+    React.useState([
+      false,
+      false,
+      false,
+      false,
+      false,
+      false,
+      false,
+      false,
+      false,
+    ]);
+  const handleCheckboxChange = (
+    checked: boolean,
+    targetIndex: number,
+    setter: React.Dispatch<React.SetStateAction<boolean[]>>
+  ) => {
+    const isAll = targetIndex === -1;
+    if (isAll) {
+      setter((prev) => {
+        return prev.map((checked) => !checked);
+      });
+    } else {
+      setter((prev) => {
+        const newChecked = [...prev];
+        newChecked[targetIndex] = checked;
+
+        return newChecked;
+      });
+    }
+  };
+
+  const hasDifferentValue = (arr: boolean[]) => {
+    return arr.some((value) => value !== arr[0]);
+  };
+
   return (
     <Box sx={{ width: "100%" }}>
       <Paper sx={{ width: "100%", mb: 2 }}>
-        <EnhancedTableToolbar numSelected={selected.length} />
+        <Toolbar
+          sx={[
+            {
+              pl: { sm: 2 },
+              pr: { xs: 1, sm: 1 },
+            },
+            numSelected > 0 && {
+              bgcolor: (theme) =>
+                alpha(
+                  theme.palette.primary.main,
+                  theme.palette.action.activatedOpacity
+                ),
+            },
+          ]}
+        >
+          {numSelected > 0 ? (
+            <Typography
+              sx={{ flex: "1 1 100%" }}
+              color="inherit"
+              variant="subtitle1"
+              component="div"
+            >
+              {numSelected} selected
+            </Typography>
+          ) : (
+            <Typography
+              sx={{ flex: "1 1 100%" }}
+              variant="h6"
+              id="tableTitle"
+              component="div"
+            >
+              応募一覧
+            </Typography>
+          )}
+          <Tooltip title="Filter list">
+            <IconButton onClick={handleFilterOpen} aria-describedby={filterId}>
+              <FilterListIcon />
+            </IconButton>
+          </Tooltip>
+          <Popover
+            id={filterId}
+            open={isFilterOpened}
+            anchorEl={anchorElOfFilter}
+            onClose={handleFilterClose}
+            anchorOrigin={{
+              vertical: "bottom",
+              horizontal: "left",
+            }}
+          >
+            <Stack sx={{ padding: 2 }} spacing={2}>
+              <Typography variant="h6">絞り込み</Typography>
+              <Stack direction={"row"} divider={<ColumnDivider />} spacing={1}>
+                <Box>
+                  <FormControlLabel
+                    label="国"
+                    control={
+                      <Checkbox
+                        checked={
+                          checkedCountry[0] &&
+                          checkedCountry[1] &&
+                          checkedCountry[2] &&
+                          checkedCountry[3]
+                        }
+                        indeterminate={hasDifferentValue(checkedCountry)}
+                        onChange={(e) =>
+                          handleCheckboxChange(
+                            e.target.checked,
+                            -1,
+                            setCheckedCountry
+                          )
+                        }
+                      />
+                    }
+                  />
+                  <Box sx={{ display: "flex", flexDirection: "column", ml: 3 }}>
+                    <FormControlLabel
+                      label="Japan"
+                      control={
+                        <Checkbox
+                          checked={checkedCountry[0]}
+                          onChange={(e) =>
+                            handleCheckboxChange(
+                              e.target.checked,
+                              0,
+                              setCheckedCountry
+                            )
+                          }
+                        />
+                      }
+                    />
+                    <FormControlLabel
+                      label="Taiwan"
+                      control={
+                        <Checkbox
+                          checked={checkedCountry[1]}
+                          onChange={(e) =>
+                            handleCheckboxChange(
+                              e.target.checked,
+                              1,
+                              setCheckedCountry
+                            )
+                          }
+                        />
+                      }
+                    />
+                    <FormControlLabel
+                      label="South Korea"
+                      control={
+                        <Checkbox
+                          checked={checkedCountry[2]}
+                          onChange={(e) =>
+                            handleCheckboxChange(
+                              e.target.checked,
+                              2,
+                              setCheckedCountry
+                            )
+                          }
+                        />
+                      }
+                    />
+                    <FormControlLabel
+                      label="USA"
+                      control={
+                        <Checkbox
+                          checked={checkedCountry[3]}
+                          onChange={(e) =>
+                            handleCheckboxChange(
+                              e.target.checked,
+                              3,
+                              setCheckedCountry
+                            )
+                          }
+                        />
+                      }
+                    />
+                  </Box>
+                </Box>
+                <Box>
+                  <FormControlLabel
+                    label="適格性"
+                    control={
+                      <Checkbox
+                        checked={checkedEligibility[0] && checkedEligibility[1]}
+                        indeterminate={hasDifferentValue(checkedEligibility)}
+                        onChange={(e) =>
+                          handleCheckboxChange(
+                            e.target.checked,
+                            -1,
+                            setCheckedEligibility
+                          )
+                        }
+                      />
+                    }
+                  />
+                  <Box sx={{ display: "flex", flexDirection: "column", ml: 3 }}>
+                    <FormControlLabel
+                      label="適格"
+                      control={
+                        <Checkbox
+                          checked={checkedEligibility[0]}
+                          onChange={(e) =>
+                            handleCheckboxChange(
+                              e.target.checked,
+                              0,
+                              setCheckedEligibility
+                            )
+                          }
+                        />
+                      }
+                    />
+                    <FormControlLabel
+                      label="不適格"
+                      control={
+                        <Checkbox
+                          checked={checkedEligibility[1]}
+                          onChange={(e) =>
+                            handleCheckboxChange(
+                              e.target.checked,
+                              1,
+                              setCheckedEligibility
+                            )
+                          }
+                        />
+                      }
+                    />
+                  </Box>
+                </Box>
+                <Box>
+                  <FormControlLabel
+                    label="業種"
+                    control={
+                      <Checkbox
+                        checked={
+                          checkedIndustry[0] &&
+                          checkedIndustry[1] &&
+                          checkedIndustry[2]
+                        }
+                        indeterminate={hasDifferentValue(checkedIndustry)}
+                        onChange={(e) =>
+                          handleCheckboxChange(
+                            e.target.checked,
+                            -1,
+                            setCheckedIndustry
+                          )
+                        }
+                      />
+                    }
+                  />
+                  <Box sx={{ display: "flex", flexDirection: "column", ml: 3 }}>
+                    <FormControlLabel
+                      label="建設"
+                      control={
+                        <Checkbox
+                          checked={checkedIndustry[0]}
+                          onChange={(e) =>
+                            handleCheckboxChange(
+                              e.target.checked,
+                              0,
+                              setCheckedIndustry
+                            )
+                          }
+                        />
+                      }
+                    />
+                    <FormControlLabel
+                      label="医療"
+                      control={
+                        <Checkbox
+                          checked={checkedIndustry[1]}
+                          onChange={(e) =>
+                            handleCheckboxChange(
+                              e.target.checked,
+                              1,
+                              setCheckedIndustry
+                            )
+                          }
+                        />
+                      }
+                    />
+                    <FormControlLabel
+                      label="航空"
+                      control={
+                        <Checkbox
+                          checked={checkedIndustry[2]}
+                          onChange={(e) =>
+                            handleCheckboxChange(
+                              e.target.checked,
+                              2,
+                              setCheckedIndustry
+                            )
+                          }
+                        />
+                      }
+                    />
+                  </Box>
+                </Box>
+                <Box>
+                  <FormControlLabel
+                    label="該当領域"
+                    control={
+                      <Checkbox
+                        checked={
+                          checkedCorrespondingRegion[0] &&
+                          checkedCorrespondingRegion[1] &&
+                          checkedCorrespondingRegion[2]
+                        }
+                        indeterminate={hasDifferentValue(
+                          checkedCorrespondingRegion
+                        )}
+                        onChange={(e) =>
+                          handleCheckboxChange(
+                            e.target.checked,
+                            -1,
+                            setCheckedCorrespondingRegion
+                          )
+                        }
+                      />
+                    }
+                  />
+                  <Box sx={{ display: "flex", flexDirection: "column", ml: 3 }}>
+                    <FormControlLabel
+                      label="建設"
+                      control={
+                        <Checkbox
+                          checked={checkedCorrespondingRegion[0]}
+                          onChange={(e) =>
+                            handleCheckboxChange(
+                              e.target.checked,
+                              0,
+                              setCheckedCorrespondingRegion
+                            )
+                          }
+                        />
+                      }
+                    />
+                    <FormControlLabel
+                      label="医療"
+                      control={
+                        <Checkbox
+                          checked={checkedCorrespondingRegion[1]}
+                          onChange={(e) =>
+                            handleCheckboxChange(
+                              e.target.checked,
+                              1,
+                              setCheckedCorrespondingRegion
+                            )
+                          }
+                        />
+                      }
+                    />
+                    <FormControlLabel
+                      label="航空"
+                      control={
+                        <Checkbox
+                          checked={checkedCorrespondingRegion[2]}
+                          onChange={(e) =>
+                            handleCheckboxChange(
+                              e.target.checked,
+                              2,
+                              setCheckedCorrespondingRegion
+                            )
+                          }
+                        />
+                      }
+                    />
+                  </Box>
+                </Box>
+                <Box>
+                  <FormControlLabel
+                    label="サービスローンチの信頼性"
+                    control={
+                      <Checkbox
+                        checked={checkedReliability[0] && checkedReliability[1]}
+                        indeterminate={hasDifferentValue(checkedReliability)}
+                        onChange={(e) =>
+                          handleCheckboxChange(
+                            e.target.checked,
+                            -1,
+                            setCheckedReliability
+                          )
+                        }
+                      />
+                    }
+                  />
+                  <Box sx={{ display: "flex", flexDirection: "column", ml: 3 }}>
+                    <FormControlLabel
+                      label="あり"
+                      control={
+                        <Checkbox
+                          checked={checkedReliability[0]}
+                          onChange={(e) =>
+                            handleCheckboxChange(
+                              e.target.checked,
+                              0,
+                              setCheckedReliability
+                            )
+                          }
+                        />
+                      }
+                    />
+                    <FormControlLabel
+                      label="なし"
+                      control={
+                        <Checkbox
+                          checked={checkedReliability[1]}
+                          onChange={(e) =>
+                            handleCheckboxChange(
+                              e.target.checked,
+                              1,
+                              setCheckedReliability
+                            )
+                          }
+                        />
+                      }
+                    />
+                  </Box>
+                </Box>
+                <Box>
+                  <FormControlLabel
+                    label="選考状態"
+                    control={
+                      <Checkbox
+                        checked={
+                          checkedSelectionCondition[0] &&
+                          checkedSelectionCondition[1] &&
+                          checkedSelectionCondition[2] &&
+                          checkedSelectionCondition[3] &&
+                          checkedSelectionCondition[4] &&
+                          checkedSelectionCondition[5] &&
+                          checkedSelectionCondition[6] &&
+                          checkedSelectionCondition[7] &&
+                          checkedSelectionCondition[8]
+                        }
+                        indeterminate={hasDifferentValue(
+                          checkedSelectionCondition
+                        )}
+                        onChange={(e) =>
+                          handleCheckboxChange(
+                            e.target.checked,
+                            -1,
+                            setCheckedSelectionCondition
+                          )
+                        }
+                      />
+                    }
+                  />
+                  <Box sx={{ display: "flex", flexDirection: "column", ml: 3 }}>
+                    {[
+                      "1次選考中",
+                      "1次選考通過",
+                      "1次選考落選",
+                      "2次選考中",
+                      "2次選考通過",
+                      "2次選考落選",
+                      "最終選考中",
+                      "最終選考通過",
+                      "最終選考落選",
+                    ].map((label, index) => (
+                      <FormControlLabel
+                        key={label}
+                        label={label}
+                        control={
+                          <Checkbox
+                            checked={checkedSelectionCondition[index]}
+                            onChange={(e) =>
+                              handleCheckboxChange(
+                                e.target.checked,
+                                index,
+                                setCheckedSelectionCondition
+                              )
+                            }
+                          />
+                        }
+                      />
+                    ))}
+                  </Box>
+                </Box>
+              </Stack>
+            </Stack>
+          </Popover>
+
+          <Tooltip title="Download CSV">
+            <IconButton>
+              <DownloadIcon />
+            </IconButton>
+          </Tooltip>
+        </Toolbar>
+
         <TableContainer>
           <Table
             sx={{ minWidth: 750 }}
@@ -794,13 +709,33 @@ export default function EnhancedTable() {
             size={"medium"}
             className={"detailTarget"}
           >
-            <EnhancedTableHead
-              numSelected={selected.length}
-              order={order}
-              orderBy={orderBy}
-              onRequestSort={handleRequestSort}
-              rowCount={tableRows.length}
-            />
+            <TableHead>
+              <TableRow>
+                {HEAD_CELLS.map((headCell) => (
+                  <TableCell
+                    key={headCell.id}
+                    align={headCell.numeric ? "right" : "left"}
+                    sortDirection={orderBy === headCell.id ? order : false}
+                  >
+                    <TableSortLabel
+                      active={orderBy === headCell.id}
+                      direction={orderBy === headCell.id ? order : "asc"}
+                      onClick={createSortHandler(headCell.id)}
+                    >
+                      {headCell.label}
+                      {orderBy === headCell.id ? (
+                        <Box component="span" sx={visuallyHidden}>
+                          {order === "desc"
+                            ? "sorted descending"
+                            : "sorted ascending"}
+                        </Box>
+                      ) : null}
+                    </TableSortLabel>
+                  </TableCell>
+                ))}
+              </TableRow>
+            </TableHead>
+
             <TableBody>
               {visibleRows.map((row, index) => {
                 const labelId = `enhanced-table-checkbox-${index}`;
