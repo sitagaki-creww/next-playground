@@ -112,8 +112,8 @@ export default function RootLayout({
             <List>
               <ListItem disablePadding>
                 <ListItemButton
-                  selected={pathname === "/dashboard"}
-                  onClick={() => router.push("/dashboard")}
+                  selected={pathname === "/management/dashboard"}
+                  onClick={() => router.push("/management/dashboard")}
                 >
                   <ListItemIcon>
                     <BarChartIcon />
@@ -123,8 +123,8 @@ export default function RootLayout({
               </ListItem>
               <ListItem disablePadding>
                 <ListItemButton
-                  selected={pathname === "/applications"}
-                  onClick={() => router.push("/applications")}
+                  selected={pathname === "/management/applications"}
+                  onClick={() => router.push("/management/applications")}
                 >
                   <ListItemIcon>
                     <TableChartIcon />
