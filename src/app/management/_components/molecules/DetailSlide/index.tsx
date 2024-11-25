@@ -1,111 +1,64 @@
 "use client";
 
-import FilterListIcon from "@mui/icons-material/FilterList";
-import DownloadIcon from "@mui/icons-material/Download";
 import SendIcon from "@mui/icons-material/Send";
 import {
   Avatar,
   Button,
-  Checkbox,
   Collapse,
   Divider,
   FormControl,
-  FormControlLabel,
-  FormGroup,
   Link,
   List,
   ListItem,
   ListItemAvatar,
   ListItemText,
-  MenuItem,
   NativeSelect,
-  Popover,
   Select,
-  SelectChangeEvent,
   Slide,
   Stack,
   TextField,
 } from "@mui/material";
 import Box from "@mui/material/Box";
 import Grid from "@mui/material/Grid2";
-import IconButton from "@mui/material/IconButton";
 import Paper from "@mui/material/Paper";
-import { alpha } from "@mui/material/styles";
-import Table from "@mui/material/Table";
-import TableBody from "@mui/material/TableBody";
-import TableCell from "@mui/material/TableCell";
-import TableContainer from "@mui/material/TableContainer";
-import TableHead from "@mui/material/TableHead";
-import TableRow from "@mui/material/TableRow";
-import TableSortLabel from "@mui/material/TableSortLabel";
 import Toolbar from "@mui/material/Toolbar";
-import Tooltip from "@mui/material/Tooltip";
 import Typography from "@mui/material/Typography";
-import { visuallyHidden } from "@mui/utils";
 import * as React from "react";
 import RowDivider from "../RowDivider";
-import ColumnDivider from "../ColumnDivider";
+import { Application } from "@/app/management/_domain/application";
 import { useModel } from "./model";
+import { ExpandingText } from "../ExpandingText";
 
-export default function DetailSlide() {
-  const { selectedUser } = useModel();
+type Props = {
+  application: Application | undefined;
+};
 
-  const [isMemoExpanded, setIsMemoExpanded] = React.useState<boolean>(false);
-
-  const [staffName, setStaffName] = React.useState<string[]>([]);
-  const handleStaffNameChange = (
-    event: React.ChangeEvent<HTMLSelectElement>
-  ) => {
-    const { options } = event.target;
-    const value: string[] = [];
-    for (let i = 0, l = options.length; i < l; i += 1) {
-      if (options[i].selected) {
-        value.push(options[i].value);
-      }
-    }
-    setStaffName(value);
-  };
-
-  const [industry, setIndustry] = React.useState("");
-  const handleIndustryChange: React.ChangeEventHandler<HTMLSelectElement> = (
-    event
-  ) => {
-    setIndustry(event.target.value);
-  };
-
-  const [correspondingRegion, setCorrespondingRegion] = React.useState("");
-  const handleCorrespondingRegionChange: React.ChangeEventHandler<
-    HTMLSelectElement
-  > = (event) => {
-    setCorrespondingRegion(event.target.value);
-  };
-
-  const [eligibility, setEligibility] = React.useState("");
-  const handleEligibilityChange: React.ChangeEventHandler<HTMLSelectElement> = (
-    event
-  ) => {
-    setEligibility(event.target.value);
-  };
-
-  const [reliabilityOfServiceLaunch, setReliabilityOfServiceLaunch] =
-    React.useState("");
-  const handleReliabilityOfServiceLaunchChange: React.ChangeEventHandler<
-    HTMLSelectElement
-  > = (event) => {
-    setReliabilityOfServiceLaunch(event.target.value);
-  };
-
-  const [selectionCondition, setSelectionCondition] = React.useState("");
-  const handleSelectionConditionChange: React.ChangeEventHandler<
-    HTMLSelectElement
-  > = (event) => {
-    setSelectionCondition(event.target.value);
-  };
+export const DetailSlide = ({ application }: Props) => {
+  const {
+    isMemoExpanded,
+    isServiceLaunchExpanded,
+    isAchievementExpanded,
+    isAchievementOfAbroadExpanded,
+    isHaveEnglishSpeakerExpanded,
+    handleExpandEvent,
+    staffName,
+    handleStaffNameChange,
+    industry,
+    handleIndustryChange,
+    correspondingRegion,
+    handleCorrespondingRegionChange,
+    eligibility,
+    handleEligibilityChange,
+    reliabilityOfServiceLaunch,
+    handleReliabilityOfServiceLaunchChange,
+    selectionCondition,
+    handleSelectionConditionChange,
+  } = useModel();
 
   return (
     <Slide
       direction="left"
-      in={!!selectedUser}
+      in={!!application}
       mountOnEnter
       unmountOnExit
       className={"detailTarget"}
@@ -136,14 +89,14 @@ export default function DetailSlide() {
                 <Grid size={9}>
                   <Stack spacing={0.5}>
                     <Typography variant="body2">
-                      {selectedUser?.profile.name}
+                      {application?.profile.name.value}
                     </Typography>
                     <Typography
                       variant="body2"
                       color="textDisabled"
                       sx={{ fontSize: 10 }}
                     >
-                      更新日: 2020/10/11 10:10:10
+                      更新日: {application?.profile.name.updatedAt}
                     </Typography>
                   </Stack>
                 </Grid>
@@ -155,7 +108,7 @@ export default function DetailSlide() {
                 </Grid>
                 <Grid size={9}>
                   <Typography variant="body2">
-                    {selectedUser?.profile.email}
+                    {application?.profile.email}
                   </Typography>
                 </Grid>
               </Grid>
@@ -166,9 +119,9 @@ export default function DetailSlide() {
                 </Grid>
                 <Grid size={9}>
                   <Typography variant="body2">
-                    {selectedUser?.profile.country.submittedAt}（受付時）/{" "}
-                    {selectedUser?.profile.country.createdAt}（提出時）/{" "}
-                    {selectedUser?.profile.country.updatedAt}(更新時)
+                    {application?.profile.country.submittedAt}（受付時）/{" "}
+                    {application?.profile.country.createdAt}（提出時）/{" "}
+                    {application?.profile.country.updatedAt}(更新時)
                   </Typography>
                 </Grid>
               </Grid>
@@ -179,7 +132,7 @@ export default function DetailSlide() {
                 </Grid>
                 <Grid size={9}>
                   <Typography variant="body2">
-                    {selectedUser?.profile.id}
+                    {application?.profile.id}
                   </Typography>
                 </Grid>
               </Grid>
@@ -196,7 +149,7 @@ export default function DetailSlide() {
                 <Grid size={9}>
                   <Stack spacing={0.5}>
                     <Typography variant="body2">
-                      {selectedUser?.organization.name}
+                      {application?.organization.name.value}
                     </Typography>
 
                     <Typography
@@ -204,7 +157,7 @@ export default function DetailSlide() {
                       color="textDisabled"
                       sx={{ fontSize: 10 }}
                     >
-                      更新日: 2020/10/11 10:10:10
+                      更新日: {application?.organization.name.updatedAt}
                     </Typography>
                   </Stack>
                 </Grid>
@@ -218,11 +171,11 @@ export default function DetailSlide() {
                   <Stack spacing={0.5}>
                     <Link
                       variant="body2"
-                      href={selectedUser?.organization.organizationSite}
+                      href={application?.organization.organizationSite.value}
                       rel="noopener"
                       target="_blank"
                     >
-                      {selectedUser?.organization.organizationSite}
+                      {application?.organization.organizationSite.value}
                     </Link>
 
                     <Typography
@@ -230,7 +183,8 @@ export default function DetailSlide() {
                       color="textDisabled"
                       sx={{ fontSize: 10 }}
                     >
-                      更新日: 2020/10/11 10:10:10
+                      更新日:{" "}
+                      {application?.organization.organizationSite.updatedAt}
                     </Typography>
                   </Stack>
                 </Grid>
@@ -244,11 +198,11 @@ export default function DetailSlide() {
                   <Stack spacing={0.5}>
                     <Link
                       variant="body2"
-                      href={selectedUser?.organization.serviceSite}
+                      href={application?.organization.serviceSite.value}
                       rel="noopener"
                       target="_blank"
                     >
-                      {selectedUser?.organization.serviceSite}
+                      {application?.organization.serviceSite.value}
                     </Link>
 
                     <Typography
@@ -256,7 +210,7 @@ export default function DetailSlide() {
                       color="textDisabled"
                       sx={{ fontSize: 10 }}
                     >
-                      更新日: 2020/10/11 10:10:10
+                      更新日: {application?.organization.serviceSite.updatedAt}
                     </Typography>
                   </Stack>
                 </Grid>
@@ -268,7 +222,7 @@ export default function DetailSlide() {
                 </Grid>
                 <Grid size={9}>
                   <Typography variant="body2">
-                    {selectedUser?.organization.id}
+                    {application?.organization.id}
                   </Typography>
                 </Grid>
               </Grid>
@@ -284,7 +238,7 @@ export default function DetailSlide() {
                 </Grid>
                 <Grid size={9}>
                   <Stack spacing={1}>
-                    {selectedUser?.application.files.map((file) => (
+                    {application?.application.files.map((file) => (
                       <Stack spacing={0.5} key={file.url}>
                         <Link
                           variant="body2"
@@ -300,7 +254,7 @@ export default function DetailSlide() {
                           color="textDisabled"
                           sx={{ fontSize: 10 }}
                         >
-                          更新日: 2020/10/11 10:10:10
+                          更新日: {file.updatedAt}
                         </Typography>
                       </Stack>
                     ))}
@@ -314,39 +268,18 @@ export default function DetailSlide() {
                 </Grid>
                 <Grid size={9}>
                   <Stack spacing={0.5}>
-                    <Box bgcolor={"#EEEEEE"} sx={{ p: 1 }} borderRadius={1}>
-                      <Typography
-                        variant="body2"
-                        onClick={() =>
-                          setIsMemoExpanded((currentValue) => !currentValue)
-                        }
-                      >
-                        {selectedUser?.application.memo.slice(0, 50)}
-                        {selectedUser?.application.memo.slice(
-                          50,
-                          selectedUser?.application.memo.length
-                        ) && isMemoExpanded
-                          ? null
-                          : "..."}
-                        <Collapse
-                          in={isMemoExpanded}
-                          timeout="auto"
-                          unmountOnExit
-                        >
-                          {selectedUser?.application.memo.slice(
-                            50,
-                            selectedUser?.application.memo.length
-                          )}
-                        </Collapse>
-                      </Typography>
-                    </Box>
+                    <ExpandingText
+                      onClick={() => handleExpandEvent("memo")}
+                      isExpanded={isMemoExpanded}
+                      text={application?.application.memo.value ?? ""}
+                    />
 
                     <Typography
                       variant="body2"
                       color="textDisabled"
                       sx={{ fontSize: 10 }}
                     >
-                      更新日: 2020/10/11 10:10:10
+                      更新日:{application?.application.memo.updatedAt}
                     </Typography>
                   </Stack>
                 </Grid>
@@ -358,39 +291,18 @@ export default function DetailSlide() {
                 </Grid>
                 <Grid size={9}>
                   <Stack spacing={0.5}>
-                    <Box bgcolor={"#EEEEEE"} sx={{ p: 1 }} borderRadius={1}>
-                      <Typography
-                        variant="body2"
-                        onClick={() =>
-                          setIsMemoExpanded((currentValue) => !currentValue)
-                        }
-                      >
-                        {selectedUser?.application.memo.slice(0, 50)}
-                        {selectedUser?.application.memo.slice(
-                          50,
-                          selectedUser?.application.memo.length
-                        ) && isMemoExpanded
-                          ? null
-                          : "..."}
-                        <Collapse
-                          in={isMemoExpanded}
-                          timeout="auto"
-                          unmountOnExit
-                        >
-                          {selectedUser?.application.memo.slice(
-                            50,
-                            selectedUser?.application.memo.length
-                          )}
-                        </Collapse>
-                      </Typography>
-                    </Box>
+                    <ExpandingText
+                      onClick={() => handleExpandEvent("serviceLaunch")}
+                      isExpanded={isServiceLaunchExpanded}
+                      text={application?.application.serviceLaunch.value ?? ""}
+                    />
 
                     <Typography
                       variant="body2"
                       color="textDisabled"
                       sx={{ fontSize: 10 }}
                     >
-                      更新日: 2020/10/11 10:10:10
+                      更新日: {application?.application.serviceLaunch.updatedAt}
                     </Typography>
                   </Stack>
                 </Grid>
@@ -402,39 +314,18 @@ export default function DetailSlide() {
                 </Grid>
                 <Grid size={9}>
                   <Stack spacing={0.5}>
-                    <Box bgcolor={"#EEEEEE"} sx={{ p: 1 }} borderRadius={1}>
-                      <Typography
-                        variant="body2"
-                        onClick={() =>
-                          setIsMemoExpanded((currentValue) => !currentValue)
-                        }
-                      >
-                        {selectedUser?.application.memo.slice(0, 50)}
-                        {selectedUser?.application.memo.slice(
-                          50,
-                          selectedUser?.application.memo.length
-                        ) && isMemoExpanded
-                          ? null
-                          : "..."}
-                        <Collapse
-                          in={isMemoExpanded}
-                          timeout="auto"
-                          unmountOnExit
-                        >
-                          {selectedUser?.application.memo.slice(
-                            50,
-                            selectedUser?.application.memo.length
-                          )}
-                        </Collapse>
-                      </Typography>
-                    </Box>
+                    <ExpandingText
+                      onClick={() => handleExpandEvent("achievement")}
+                      isExpanded={isAchievementExpanded}
+                      text={application?.application.achievement.value ?? ""}
+                    />
 
                     <Typography
                       variant="body2"
                       color="textDisabled"
                       sx={{ fontSize: 10 }}
                     >
-                      更新日: 2020/10/11 10:10:10
+                      更新日: {application?.application.achievement.updatedAt}
                     </Typography>
                   </Stack>
                 </Grid>
@@ -446,39 +337,21 @@ export default function DetailSlide() {
                 </Grid>
                 <Grid size={9}>
                   <Stack spacing={0.5}>
-                    <Box bgcolor={"#EEEEEE"} sx={{ p: 1 }} borderRadius={1}>
-                      <Typography
-                        variant="body2"
-                        onClick={() =>
-                          setIsMemoExpanded((currentValue) => !currentValue)
-                        }
-                      >
-                        {selectedUser?.application.memo.slice(0, 50)}
-                        {selectedUser?.application.memo.slice(
-                          50,
-                          selectedUser?.application.memo.length
-                        ) && isMemoExpanded
-                          ? null
-                          : "..."}
-                        <Collapse
-                          in={isMemoExpanded}
-                          timeout="auto"
-                          unmountOnExit
-                        >
-                          {selectedUser?.application.memo.slice(
-                            50,
-                            selectedUser?.application.memo.length
-                          )}
-                        </Collapse>
-                      </Typography>
-                    </Box>
+                    <ExpandingText
+                      onClick={() => handleExpandEvent("achievementOfAbroad")}
+                      isExpanded={isAchievementOfAbroadExpanded}
+                      text={
+                        application?.application.achievementOfAbroad.value ?? ""
+                      }
+                    />
 
                     <Typography
                       variant="body2"
                       color="textDisabled"
                       sx={{ fontSize: 10 }}
                     >
-                      更新日: 2020/10/11 10:10:10
+                      更新日:{" "}
+                      {application?.application.achievementOfAbroad.updatedAt}
                     </Typography>
                   </Stack>
                 </Grid>
@@ -490,39 +363,21 @@ export default function DetailSlide() {
                 </Grid>
                 <Grid size={9}>
                   <Stack spacing={0.5}>
-                    <Box bgcolor={"#EEEEEE"} sx={{ p: 1 }} borderRadius={1}>
-                      <Typography
-                        variant="body2"
-                        onClick={() =>
-                          setIsMemoExpanded((currentValue) => !currentValue)
-                        }
-                      >
-                        {selectedUser?.application.memo.slice(0, 50)}
-                        {selectedUser?.application.memo.slice(
-                          50,
-                          selectedUser?.application.memo.length
-                        ) && isMemoExpanded
-                          ? null
-                          : "..."}
-                        <Collapse
-                          in={isMemoExpanded}
-                          timeout="auto"
-                          unmountOnExit
-                        >
-                          {selectedUser?.application.memo.slice(
-                            50,
-                            selectedUser?.application.memo.length
-                          )}
-                        </Collapse>
-                      </Typography>
-                    </Box>
+                    <ExpandingText
+                      onClick={() => handleExpandEvent("haveEnglishSpeaker")}
+                      isExpanded={isHaveEnglishSpeakerExpanded}
+                      text={
+                        application?.application.haveEnglishSpeaker.value ?? ""
+                      }
+                    />
 
                     <Typography
                       variant="body2"
                       color="textDisabled"
                       sx={{ fontSize: 10 }}
                     >
-                      更新日: 2020/10/11 10:10:10
+                      更新日:{" "}
+                      {application?.application.haveEnglishSpeaker.updatedAt}
                     </Typography>
                   </Stack>
                 </Grid>
@@ -534,14 +389,16 @@ export default function DetailSlide() {
                 </Grid>
                 <Grid size={9}>
                   <Stack spacing={0.5}>
-                    <Typography variant="body2">10000円</Typography>
+                    <Typography variant="body2">
+                      {application?.application.capital.value}
+                    </Typography>
 
                     <Typography
                       variant="body2"
                       color="textDisabled"
                       sx={{ fontSize: 10 }}
                     >
-                      更新日: 2020/10/11 10:10:10
+                      更新日: {application?.application.capital.updatedAt}
                     </Typography>
                   </Stack>
                 </Grid>
@@ -553,14 +410,16 @@ export default function DetailSlide() {
                 </Grid>
                 <Grid size={9}>
                   <Stack spacing={0.5}>
-                    <Typography variant="body2">シード</Typography>
+                    <Typography variant="body2">
+                      {application?.application.round.value}
+                    </Typography>
 
                     <Typography
                       variant="body2"
                       color="textDisabled"
                       sx={{ fontSize: 10 }}
                     >
-                      更新日: 2020/10/11 10:10:10
+                      更新日: {application?.application.round.updatedAt}
                     </Typography>
                   </Stack>
                 </Grid>
@@ -572,14 +431,17 @@ export default function DetailSlide() {
                 </Grid>
                 <Grid size={9}>
                   <Stack spacing={0.5}>
-                    <Typography variant="body2">2019</Typography>
+                    <Typography variant="body2">
+                      {application?.application.establishmentDate.value}
+                    </Typography>
 
                     <Typography
                       variant="body2"
                       color="textDisabled"
                       sx={{ fontSize: 10 }}
                     >
-                      更新日: 2020/10/11 10:10:10
+                      更新日:{" "}
+                      {application?.application.establishmentDate.updatedAt}
                     </Typography>
                   </Stack>
                 </Grid>
@@ -588,13 +450,13 @@ export default function DetailSlide() {
 
             <Stack>
               <Typography variant="caption" component={"p"}>
-                受付日時: {selectedUser?.submittedAt}
+                受付日時: {application?.submittedAt}
               </Typography>
               <Typography variant="caption" component={"p"}>
-                提出日時: {selectedUser?.createdAt}
+                提出日時: {application?.createdAt}
               </Typography>
               <Typography variant="caption" component={"p"}>
-                更新日時: {selectedUser?.updatedAt}
+                更新日時: {application?.updatedAt}
               </Typography>
             </Stack>
           </Stack>
@@ -862,4 +724,4 @@ export default function DetailSlide() {
       </Paper>
     </Slide>
   );
-}
+};
