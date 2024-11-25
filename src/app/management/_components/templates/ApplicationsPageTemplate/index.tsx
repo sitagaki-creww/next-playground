@@ -2,8 +2,8 @@
 
 import TableChartIcon from "@mui/icons-material/TableChart";
 import { Stack, Typography } from "@mui/material";
-import { useModel } from "./model";
 import { ApplicationTable } from "../../organisms/ApplicationTable";
+import { useModel } from "./model";
 
 export const ApplicationsPageTemplate = () => {
   const { applicationList } = useModel();

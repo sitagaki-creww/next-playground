@@ -1,23 +1,34 @@
 "use client";
 
+import BarChartIcon from "@mui/icons-material/BarChart";
+import TableChartIcon from "@mui/icons-material/TableChart";
+import {
+  Avatar,
+  FormControl,
+  IconButton,
+  InputLabel,
+  Menu,
+  MenuItem,
+  Select,
+  Stack,
+  Tooltip,
+} from "@mui/material";
 import { AppRouterCacheProvider } from "@mui/material-nextjs/v14-appRouter";
-import * as React from "react";
-import Box from "@mui/material/Box";
-import Drawer from "@mui/material/Drawer";
 import AppBar from "@mui/material/AppBar";
+import Box from "@mui/material/Box";
 import CssBaseline from "@mui/material/CssBaseline";
-import Toolbar from "@mui/material/Toolbar";
+import Drawer from "@mui/material/Drawer";
 import List from "@mui/material/List";
-import Typography from "@mui/material/Typography";
-import Divider from "@mui/material/Divider";
 import ListItem from "@mui/material/ListItem";
 import ListItemButton from "@mui/material/ListItemButton";
 import ListItemIcon from "@mui/material/ListItemIcon";
 import ListItemText from "@mui/material/ListItemText";
-import BarChartIcon from "@mui/icons-material/BarChart";
-import TableChartIcon from "@mui/icons-material/TableChart";
-import { Avatar, IconButton, Menu, MenuItem, Tooltip } from "@mui/material";
-import { usePathname, useRouter } from "next/navigation";
+import Toolbar from "@mui/material/Toolbar";
+import Typography from "@mui/material/Typography";
+import { useParams, usePathname, useRouter } from "next/navigation";
+import * as React from "react";
+import RowDivider from "../_components/molecules/RowDivider";
+import ColumnDivider from "../_components/molecules/ColumnDivider";
 
 const drawerWidth = 240;
 
@@ -28,6 +39,12 @@ export default function RootLayout({
 }>) {
   const router = useRouter();
   const pathname = usePathname();
+  const programIds = ["program-batch-1", "program-batch-2"] as const;
+  const programIdMap = {
+    "program-batch-1": "Program Batch 1",
+    "program-batch-2": "Program Batch 2",
+  };
+  const { programId } = { programId: "program-batch-1" };
 
   const [anchorElNav, setAnchorElNav] = React.useState<null | HTMLElement>(
     null
@@ -51,6 +68,10 @@ export default function RootLayout({
     setAnchorElUser(null);
   };
 
+  const handleProgramChange = (value: string) => {
+    router.push(`/management/${programId}${value}/dashboard`);
+  };
+
   return (
     <AppRouterCacheProvider>
       <Box sx={{ display: "flex" }}>
@@ -58,11 +79,37 @@ export default function RootLayout({
         <AppBar
           position="fixed"
           sx={{ zIndex: (theme) => theme.zIndex.drawer + 1 }}
+          color="default"
         >
           <Toolbar>
-            <Typography variant="h6" noWrap component="div">
-              Management
-            </Typography>
+            <Stack
+              direction="row"
+              divider={<ColumnDivider />}
+              spacing={2}
+              flexShrink={0}
+            >
+              <Typography variant="h6" noWrap component="div" flexShrink={0}>
+                Management
+              </Typography>
+              <FormControl fullWidth>
+                <InputLabel id="demo-simple-select-label">Program</InputLabel>
+                <Select
+                  labelId="demo-simple-select-label"
+                  id="demo-simple-select"
+                  value={programId}
+                  label="Program"
+                  onChange={(e) => handleProgramChange(e.target.value)}
+                  size="small"
+                >
+                  {programIds.map((programId) => (
+                    <MenuItem key={programId} value={programId}>
+                      {programIdMap[programId]}
+                    </MenuItem>
+                  ))}
+                </Select>
+              </FormControl>
+            </Stack>
+
             <Box sx={{ flexGrow: 1 }} />
             <Tooltip title="Open settings">
               <IconButton onClick={handleOpenUserMenu}>
@@ -112,8 +159,10 @@ export default function RootLayout({
             <List>
               <ListItem disablePadding>
                 <ListItemButton
-                  selected={pathname === "/management/dashboard"}
-                  onClick={() => router.push("/management/dashboard")}
+                  selected={pathname === `/management/${programId}/dashboard`}
+                  onClick={() =>
+                    router.push(`/management/${programId}/dashboard`)
+                  }
                 >
                   <ListItemIcon>
                     <BarChartIcon />
@@ -123,8 +172,12 @@ export default function RootLayout({
               </ListItem>
               <ListItem disablePadding>
                 <ListItemButton
-                  selected={pathname === "/management/applications"}
-                  onClick={() => router.push("/management/applications")}
+                  selected={
+                    pathname === `/management/${programId}/applications`
+                  }
+                  onClick={() =>
+                    router.push(`/management/${programId}/applications`)
+                  }
                 >
                   <ListItemIcon>
                     <TableChartIcon />
