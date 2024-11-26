@@ -1,6 +1,7 @@
 "use client";
 
 import SendIcon from "@mui/icons-material/Send";
+import AddIcon from "@mui/icons-material/Add";
 import {
   Avatar,
   Button,
@@ -24,10 +25,11 @@ import Paper from "@mui/material/Paper";
 import Toolbar from "@mui/material/Toolbar";
 import Typography from "@mui/material/Typography";
 import * as React from "react";
-import RowDivider from "../RowDivider";
+import RowDivider from "../../molecules/RowDivider";
 import { Application } from "@/app/management/_domain/application";
 import { useModel } from "./model";
-import { ExpandingText } from "../ExpandingText";
+import { ExpandingText } from "../../molecules/ExpandingText";
+import { AddingStaffDialog } from "../../molecules/AddingStaffDialog";
 
 type Props = {
   application: Application | undefined;
@@ -53,6 +55,9 @@ export const DetailSlide = ({ application }: Props) => {
     handleReliabilityOfServiceLaunchChange,
     selectionCondition,
     handleSelectionConditionChange,
+    openAddingStaffDialog,
+    closeAddingStaffDialog,
+    isAddingStaffDialogOpen,
   } = useModel();
 
   return (
@@ -487,6 +492,32 @@ export const DetailSlide = ({ application }: Props) => {
                     <Typography variant="body2">名前</Typography>
                   </Grid>
                   <Grid>
+                    <Stack spacing={0.5}>
+                      <Stack
+                        spacing={0.5}
+                        direction={"row"}
+                        divider={<span>/</span>}
+                      >
+                        <Typography variant="body2">久留卯 一郎</Typography>
+                        <Typography variant="body2">久留卯 二郎</Typography>
+                        <Typography variant="body2">久留卯 三郎</Typography>
+                      </Stack>
+                      <Button
+                        variant="outlined"
+                        startIcon={<AddIcon />}
+                        size="small"
+                        sx={{ alignSelf: "flex-end" }}
+                        onClick={openAddingStaffDialog}
+                      >
+                        Add
+                      </Button>
+
+                      <AddingStaffDialog
+                        isOpen={isAddingStaffDialogOpen}
+                        onClose={closeAddingStaffDialog}
+                      />
+                    </Stack>
+                    {/* 
                     <FormControl sx={{ minWidth: 120 }} size="small">
                       <Select<string[]>
                         multiple
@@ -511,7 +542,7 @@ export const DetailSlide = ({ application }: Props) => {
                           </option>
                         ))}
                       </Select>
-                    </FormControl>
+                    </FormControl> */}
                   </Grid>
                 </Grid>
               </Stack>
@@ -676,10 +707,10 @@ export const DetailSlide = ({ application }: Props) => {
                     fullWidth
                   />
                   <Button
-                    variant="contained"
-                    endIcon={<SendIcon />}
+                    variant="outlined"
+                    startIcon={<SendIcon />}
                     size="small"
-                    sx={{ alignSelf: "flex-start" }}
+                    sx={{ alignSelf: "flex-end" }}
                   >
                     Send
                   </Button>

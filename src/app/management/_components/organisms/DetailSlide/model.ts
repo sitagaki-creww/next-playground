@@ -76,6 +76,14 @@ export const useModel = () => {
     setSelectionCondition(event.target.value);
   };
 
+  const [isAddingStaffDialogOpen, setIsAddingStaffDialogOpen] = useState(false);
+  const openAddingStaffDialog = () => {
+    setIsAddingStaffDialogOpen(true);
+  };
+  const closeAddingStaffDialog = () => {
+    setIsAddingStaffDialogOpen(false);
+  };
+
   return {
     isMemoExpanded,
     isServiceLaunchExpanded,
@@ -95,5 +103,8 @@ export const useModel = () => {
     handleReliabilityOfServiceLaunchChange,
     selectionCondition,
     handleSelectionConditionChange,
+    openAddingStaffDialog,
+    closeAddingStaffDialog,
+    isAddingStaffDialogOpen,
   };
 };

@@ -24,7 +24,7 @@ import Typography from "@mui/material/Typography";
 import { visuallyHidden } from "@mui/utils";
 import * as React from "react";
 import ColumnDivider from "../../molecules/ColumnDivider";
-import { DetailSlide } from "../../molecules/DetailSlide";
+import { DetailSlide } from "../DetailSlide";
 import { useModel } from "./model";
 
 function descendingComparator<T>(a: T, b: T, orderBy: keyof T) {
